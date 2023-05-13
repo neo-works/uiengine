@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-I.
+CFLAGS=-I. -g
 
 SRCS = src/demo.c src/web/html_document.c
 

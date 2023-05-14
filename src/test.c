@@ -9,14 +9,14 @@ DEFINE_TEST_CASE(document_should_not_be_null) {
 
 DEFINE_TEST_CASE(element_id_should_equal) {
     struct HtmlDocument* document = document_load("<body id=\"test\">sss</body>");
-    struct HtmlElement* element = document->get_element_by_id("test");
+    struct HtmlElement* element = document->get_element_by_id(document, "test");
     ASSERT_NOT_NULL(element);
     ASSERT_STR_EQUAL(element->id, "test");
 }
 
 int main(int argc, char* argv[]) {
     // RUN_ALL_TESTS();
-    TEST_CASE_document_should_not_be_null();
-    TEST_CASE_element_id_should_equal();
+    TEST_document_should_not_be_null();
+    TEST_element_id_should_equal();
     return 0;
 }

@@ -94,6 +94,9 @@ HtmlAttribute *document_parse_attributes(char *doc) {
     char *bound = document_match_bound(doc);
     attr->val = document_parse_str(doc);
     document_match_and_consume(doc, attr->val);
+    if (strcmp(attr->key, "style") == 0) {
+        // TODO: parse css
+    }
     doc = document_match_and_consume(doc, bound);
 
     return attr;

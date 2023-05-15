@@ -20,14 +20,16 @@
 typedef void (*TestFunc)();
 
 #define DEFINE_TEST_CASE(name)    \
-    void TEST_CASE_##name();    \
+    int TEST_CASE_##name();    \
     void TEST_##name() {    \
-        printf("TEST("#name"):\n    "); \
-        TEST_CASE_##name(); \
+        printf("TEST("#name"):    "); \
+        if(TEST_CASE_##name() == 0) {   \
+            printf("success!"); \
+        } \
         printf("\n");   \
     }   \
     __attribute__((used)) __attribute__((section("__TESTCASES,__testcases"))) TestFunc TestFunc##name = &TEST_##name;    \
-    void TEST_CASE_##name()
+    int TEST_CASE_##name()
 
 // extern TestFunc __TESTCASES_start;
 // extern TestFunc __TESTCASES_stop;

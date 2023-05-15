@@ -5,6 +5,7 @@
 DEFINE_TEST_CASE(document_should_not_be_null) {
     struct HtmlDocument* document = document_load("<body id=\"test\">sss</body>");
     ASSERT_NOT_NULL(document);
+    return 0;
 }
 
 DEFINE_TEST_CASE(element_id_should_equal) {
@@ -12,6 +13,7 @@ DEFINE_TEST_CASE(element_id_should_equal) {
     struct HtmlElement* element = document->get_element_by_id(document, "test");
     ASSERT_NOT_NULL(element);
     ASSERT_STR_EQUAL(element->id, "test");
+    return 0;
 }
 
 int main(int argc, char* argv[]) {

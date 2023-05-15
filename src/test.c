@@ -16,9 +16,17 @@ DEFINE_TEST_CASE(element_id_should_equal) {
     return 0;
 }
 
+DEFINE_TEST_CASE(document_consume_whitespace) {
+    char *doc = "          <body></body>";
+    doc = document_consume_whitespace(doc);
+    ASSERT_STR_EQUAL(doc, "<body></body>");
+    return 0;
+}
+
 int main(int argc, char* argv[]) {
     // RUN_ALL_TESTS();
     TEST_document_should_not_be_null();
+    TEST_document_consume_whitespace();
     TEST_element_id_should_equal();
     return 0;
 }

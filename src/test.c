@@ -6,7 +6,7 @@ DEFINE_TEST_CASE(element_id_should_equal) {
     struct HtmlDocument* document = document_load("<body id=\"test\">sss</body>");
     struct HtmlElement* element = document->get_element_by_id(document, "test");
     ASSERT_NOT_NULL(element);
-    ASSERT_STR_EQUAL(element->id, "test");
+    ASSERT_STR_EQUAL(element->dom.id, "test");
     return 0;
 }
 
@@ -46,8 +46,8 @@ DEFINE_TEST_CASE(document_should_parse_tag_2) {
     HtmlDocument *document = document_load(doc);
     ASSERT_NOT_NULL(document);
     ASSERT_NOT_NULL(document->body);
-    ASSERT_NOT_NULL(document->body->tag);
-    ASSERT_STR_EQUAL(document->body->tag, "body");
+    ASSERT_NOT_NULL(document->body->dom.tag);
+    ASSERT_STR_EQUAL(document->body->dom.tag, "body");
     return 0;
 }
 
@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
     TEST_document_should_match_and_consume();
     TEST_document_should_parse_tag();
     TEST_document_should_parse_tag_2();
-    
+
     TEST_element_id_should_equal();
     return 0;
 }

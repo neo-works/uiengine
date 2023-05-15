@@ -11,11 +11,15 @@ typedef struct HtmlAttribute {
     DListNode node;
 } HtmlAttribute;
 
-typedef struct HtmlElement {
+typedef enum HtmlElementType {
+    HTML_ELEMENT_TYPE_DOM,
+    HTML_ELEMENT_TYPE_CONTENT
+} HtmlElementType;
+
+typedef struct HtmlDomElement {
     char *tag;
     char *id;
     char *name;
-    char *content;
 
     DListNode node;
 
@@ -25,6 +29,19 @@ typedef struct HtmlElement {
     HtmlAttribute *attributes;
 
     struct HtmlElement *childrens;
+} HtmlDomElement;
+
+typedef struct HtmlContentElement {
+    DListNode node;
+    char *content;
+} HtmlContentElement;
+
+typedef struct HtmlElement {
+    HtmlElementType type;
+    union {
+        HtmlDomElement dom;
+        HtmlContentElement content;
+    };
 } HtmlElement;
 
 typedef struct HtmlElement* (*HtmlDocumentGetElementById)(struct HtmlDocument *, char *);

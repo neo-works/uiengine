@@ -31,6 +31,16 @@ char* document_consume_whitespace(char *doc) {
     return doc;
 }
 
+char* document_match_bound(char *doc) {
+    if (*doc == "\"") {
+        return "\"";
+    } else if (*doc == "\'") {
+        return "\'";
+    } else {
+        exit(0);
+    }
+}
+
 char *document_match_and_consume(char *doc, char *tok) {
     char *tok_tmp = tok;
     while ((*doc != '\0') && (*tok_tmp != '\0')) {
@@ -67,8 +77,26 @@ HtmlElement *document_parse_childrens(char *doc) {
     return NULL;
 }
 
+/**
+ * @brief parse attribute
+ * {KEY}{WHITESPACE}={WHITESPACE}{"/'}{VALUE}{"/'}
+ * @param doc 
+ * @return HtmlAttribute* 
+ */
 HtmlAttribute *document_parse_attributes(char *doc) {
-    return NULL;
+    printf("%s:%s", __func__, doc);
+    HtmlAttribute *attr = (HtmlAttribute*)mem_alloc(sizeof(HtmlAttribute));
+    attr->key = document_parse_str(doc);
+    doc = document_match_and_consume(doc, attr->key);
+    doc = document_consume_whitespace(doc);
+    doc = document_match_and_consume(doc, "=");
+    doc = document_consume_whitespace(doc);
+    char *bound = document_match_bound(doc);
+    attr->val = document_parse_str(doc);
+    document_match_and_consume(doc, attr->val);
+    doc = document_match_and_consume(doc, bound);
+
+    return attr;
 }
 
 /**
@@ -81,13 +109,17 @@ HtmlElement *document_parse_element(char *doc) {
     HtmlElement *element = (HtmlDocument *)mem_alloc(sizeof(HtmlDocument));
     doc = document_consume_whitespace(doc);
     doc = document_match_and_consume(doc, "<");
-    element->tag = document_parse_tag(doc);
-    element->attributes = document_parse_attributes(doc);
-    document_match_and_consume(doc, ">");
-    element->childrens = document_parse_childrens(doc);
-    document_match_and_consume(doc, "</");
-    document_match_and_consume(doc, element->tag);
-    document_match_and_consume(doc ,">");
+    element->dom.tag = document_parse_tag(doc);
+    doc = document_match_and_consume(doc, element->dom.tag);
+    doc = document_consume_whitespace(doc);
+    if (*doc != '>') {
+        element->dom.attributes = document_parse_attributes(doc);
+    }
+    doc = document_match_and_consume(doc, ">");
+    element->dom.childrens = document_parse_childrens(doc);
+    doc = document_match_and_consume(doc, "</");
+    doc = document_match_and_consume(doc, element->dom.tag);
+    doc = document_match_and_consume(doc ,">");
 
     return element;
 }

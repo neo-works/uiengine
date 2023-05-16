@@ -60,7 +60,22 @@ DEFINE_TEST_CASE(document_should_parse_attr) {
     ASSERT_NOT_NULL(document->body->dom.attributes->key);
     ASSERT_STR_EQUAL(document->body->dom.attributes->key, "id");
     ASSERT_NOT_NULL(document->body->dom.attributes->val);
-    ASSERT_STR_EQUAL(document->body->dom.attributes->val, "testid");
+    ASSERT_STR_EQUAL(document->body->dom.attributes->val, "test_id");
+    return 0;
+}
+
+DEFINE_TEST_CASE(document_should_parse_content_children) {
+    char *doc = "<body id=\"test_id\">sss</body>";
+    HtmlDocument *document = document_load(doc);
+    ASSERT_NOT_NULL(document);
+    ASSERT_NOT_NULL(document->body);
+    ASSERT_NOT_NULL(document->body->dom.attributes);
+    ASSERT_NOT_NULL(document->body->dom.attributes->key);
+    ASSERT_STR_EQUAL(document->body->dom.attributes->key, "id");
+    ASSERT_NOT_NULL(document->body->dom.attributes->val);
+    ASSERT_STR_EQUAL(document->body->dom.attributes->val, "test_id");
+    ASSERT_NOT_NULL(document->body->dom.childrens);
+    ASSERT_STR_EQUAL(document->body->dom.childrens->content.content, "sss");
     return 0;
 }
 
@@ -71,6 +86,7 @@ int main(int argc, char* argv[]) {
     TEST_document_should_parse_tag();
     TEST_document_should_parse_tag_2();
     TEST_document_should_parse_attr();
+    TEST_document_should_parse_content_children();
 
     TEST_element_id_should_equal();
     return 0;

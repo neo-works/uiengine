@@ -57,13 +57,13 @@ typedef struct HtmlDocument {
     HtmlDocumentGetElementByName get_element_by_name;
 } HtmlDocument;
 
-
 char* document_consume_whitespace(char *doc);
 char *document_match_and_consume(char *doc, char *tok);
-char *document_parse_str(char *doc);
+char *document_parse_str(char *doc, char *bound);
 char *document_parse_tag(char *doc);
-HtmlElement *document_parse_childrens(char *doc);
-HtmlAttribute *document_parse_attributes(char *doc);
+char *document_parse_childrens(HtmlElement *children, char *doc);
+char *document_parse_attributes(HtmlAttribute* attr, char *doc);
+void document_dump(HtmlDocument *document);
 struct HtmlDocument *document_load(const char *doc);
 
 #endif /* __UI_WEB_HTML_PARSER_H__ */

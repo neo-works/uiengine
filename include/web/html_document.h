@@ -46,6 +46,7 @@ typedef struct HtmlElement {
 
 typedef struct HtmlElement* (*HtmlDocumentGetElementById)(struct HtmlDocument *, char *);
 typedef struct HtmlElement* (*HtmlDocumentGetElementByName)(struct HtmlDocument *, char *);
+typedef void (*HtmlDocumentDump)(struct HtmlDocument *);
 
 typedef struct HtmlDocument {
     HtmlElement *body;
@@ -55,6 +56,7 @@ typedef struct HtmlDocument {
 
     HtmlDocumentGetElementById get_element_by_id;
     HtmlDocumentGetElementByName get_element_by_name;
+    HtmlDocumentDump dump;
 } HtmlDocument;
 
 char* document_consume_whitespace(char *doc);

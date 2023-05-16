@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-I. -g
 
-SRCS = src/demo.c src/web/html_document.c
+SRCS = src/demo.c src/web/html_document.c src/mem/mem.c
 TEST_SRCS = src/test.c src/web/html_document.c src/mem/mem.c
 
 demo: $(SRCS)

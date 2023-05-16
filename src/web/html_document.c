@@ -10,9 +10,14 @@ HtmlElement* document_default_get_element_by_id(struct HtmlDocument *doc, char *
     return NULL;
 }
 
+void document_default_dump(struct HtmlDocument *doc) {
+
+}
+
 void document_init(HtmlDocument *document) {
     document->get_element_by_id = document_default_get_element_by_id;
     document->get_element_by_name = document_default_get_element_by_name;
+    document->dump = document_default_dump;
 }
 
 static iswhitespace(char c) {
@@ -154,6 +159,7 @@ HtmlElement *document_parse_element(char *doc) {
         doc = document_parse_childrens(children, doc);
         element->dom.childrens = children;
     }
+
 close_tag:
     doc = document_match_and_consume(doc, "</");
     doc = document_match_and_consume(doc, element->dom.tag);
@@ -175,6 +181,5 @@ struct HtmlDocument *document_load(const char *doc) {
     HtmlDocument *document = (HtmlDocument*)mem_alloc(sizeof(HtmlDocument));
     document_init(document);
     document_parse(document, doc);
-    document_dump(document);
     return document;
 }

@@ -4,6 +4,17 @@
 #include "../dlist.h"
 #include "../trie_tree.h"
 
+typedef unsigned char bool;
+#define true 1
+#define false 0 
+
+#define INIT_DNODE(node) {  \
+    do {    \
+        node.left = NULL;  \
+        node.right = NULL; \
+    } while(0); \
+}
+
 typedef struct HtmlAttribute {
     char *key;
     char *val;

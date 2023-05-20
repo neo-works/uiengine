@@ -114,7 +114,13 @@ char *document_parse_childrens(HtmlElement *children, char *doc) {
  * @return HtmlAttribute* 
  */
 char *document_parse_attributes(HtmlAttribute* attr, char *doc) {
+    HtmlAttribute *head = attr;
+    bool first = true;
     while(*doc != '>') {
+        if (!first) {
+            attr = (HtmlAttribute*)mem_alloc(sizeof(HtmlAttribute));
+            INIT_DNODE(attr->node);
+        }
         attr->key = document_parse_tag(doc);
         doc = document_match_and_consume(doc, attr->key);
         doc = document_consume_whitespace(doc);
@@ -129,7 +135,13 @@ char *document_parse_attributes(HtmlAttribute* attr, char *doc) {
         }
         doc = document_match_and_consume(doc, bound);
         doc = document_consume_whitespace(doc);
+
+        if (!first) {
+            dlist_insert(&head->node, &attr->node);
+        }
+        first = false;
     }
+    attr = head;
     return doc;
 }
 
@@ -141,6 +153,7 @@ char *document_parse_attributes(HtmlAttribute* attr, char *doc) {
  */
 HtmlElement *document_parse_element(char *doc) {
     HtmlElement *element = (HtmlDocument *)mem_alloc(sizeof(HtmlDocument));
+    INIT_DNODE(element->dom.node);
     doc = document_consume_whitespace(doc);
     doc = document_match_and_consume(doc, "<");
     element->dom.tag = document_parse_tag(doc);
@@ -148,6 +161,7 @@ HtmlElement *document_parse_element(char *doc) {
     doc = document_consume_whitespace(doc);
     if (*doc != '>') {
         HtmlAttribute *attr = (HtmlAttribute*)mem_alloc(sizeof(HtmlAttribute));
+        INIT_DNODE(attr->node);
         doc = document_parse_attributes(attr, doc);
         element->dom.attributes = attr;
     }

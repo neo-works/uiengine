@@ -88,6 +88,37 @@ DEFINE_TEST_CASE(document_should_parse_attr2) {
     return 0;
 }
 
+DEFINE_TEST_CASE(document_should_parse_attr3) {
+    char *doc = "<body id=\"test_id\" class=\"test_class\" onclick=\"hello\">sss</body>";
+    HtmlDocument *document = document_load(doc);
+    ASSERT_NOT_NULL(document);
+    ASSERT_NOT_NULL(document->body);
+
+    HtmlDomElement dom = document->body->dom;
+    HtmlAttribute *attr = dom.attributes;
+    ASSERT_NOT_NULL(attr);
+    ASSERT_NOT_NULL(attr->key);
+    ASSERT_STR_EQUAL(attr->key, "id");
+    ASSERT_NOT_NULL(attr->val);
+    ASSERT_STR_EQUAL(attr->val, "test_id");
+
+    HtmlAttribute *attr2 = ContainerOf(attr->node.right, HtmlAttribute, node);
+    ASSERT_NOT_NULL(attr2);
+    ASSERT_NOT_NULL(attr2->key);
+    ASSERT_STR_EQUAL(attr2->key, "onclick");
+    ASSERT_NOT_NULL(attr2->val);
+    ASSERT_STR_EQUAL(attr2->val, "hello");
+
+    HtmlAttribute *attr3 = ContainerOf(attr2->node.right, HtmlAttribute, node);
+    ASSERT_NOT_NULL(attr3);
+    ASSERT_NOT_NULL(attr3->key);
+    ASSERT_STR_EQUAL(attr3->key, "class");
+    ASSERT_NOT_NULL(attr3->val);
+    ASSERT_STR_EQUAL(attr3->val, "test_class");
+
+    return 0;
+}
+
 DEFINE_TEST_CASE(document_should_parse_content_children) {
     char *doc = "<body id=\"test_id\">sss</body>";
     HtmlDocument *document = document_load(doc);
@@ -111,6 +142,7 @@ int main(int argc, char* argv[]) {
     TEST_document_should_parse_tag_2();
     TEST_document_should_parse_attr();
     TEST_document_should_parse_attr2();
+    TEST_document_should_parse_attr3();
     TEST_document_should_parse_content_children();
 
     TEST_element_id_should_equal();

@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 char *mem_alloc(size_t size) {
-    char *ptr = malloc(size);
+    char *ptr = malloc(((size + sizeof(char*)) >> 2) << 2);
     ASSERT_NOT_NULL(ptr);
     return ptr;
 }

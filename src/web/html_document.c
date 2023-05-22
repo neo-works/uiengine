@@ -101,6 +101,9 @@ char *document_parse_tag(char *doc) {
 
 char *document_parse_childrens(HtmlElement *children, char *doc) {
     char* content = document_parse_str_until(doc, "<");
+    INIT_DNODE(children->dom.node);
+    children->dom.attributes = NULL;
+    children->dom.childrens = NULL;
     children->type = HTML_ELEMENT_TYPE_CONTENT;
     children->content.content = content;
     doc = document_match_and_consume(doc, content);
@@ -154,6 +157,9 @@ char *document_parse_attributes(HtmlAttribute* attr, char *doc) {
 HtmlElement *document_parse_element(char *doc) {
     HtmlElement *element = (HtmlDocument *)mem_alloc(sizeof(HtmlDocument));
     INIT_DNODE(element->dom.node);
+    element->dom.attributes = NULL;
+    element->dom.childrens = NULL;
+
     doc = document_consume_whitespace(doc);
     doc = document_match_and_consume(doc, "<");
     element->dom.tag = document_parse_tag(doc);

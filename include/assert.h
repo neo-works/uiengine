@@ -5,16 +5,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define ASSERT_NOT_NULL(element)                            \
-    if (element == NULL) {                                  \
+#define ASSERT_NOT_NULL(element)    \
+    if (element == NULL) {  \
         printf("ASSERT_NOT_NULL(failed): '"#element"' is NULL\n");  \
-        exit(1);                                            \
+        exit(1);    \
     }
 
 #define ASSERT_STR_EQUAL(ptr, val)  \
-    if (strcmp(ptr, val) != 0) {                                    \
+    if (strcmp(ptr, val) != 0) {    \
         printf("ASSERT_STR_EQUAL(failed): '"#ptr"' not equal to '"#val"'\n");\
-        exit(1);                                                    \
+        exit(1);    \
     }
 
 typedef void (*TestFunc)();
@@ -22,7 +22,7 @@ typedef void (*TestFunc)();
 #define DEFINE_TEST_CASE(name)    \
     int TEST_CASE_##name();    \
     void TEST_##name() {    \
-        printf("TEST("#name"):    "); \
+        printf("TEST("#name"):\t"); \
         if(TEST_CASE_##name() == 0) {   \
             printf("success!"); \
         } \

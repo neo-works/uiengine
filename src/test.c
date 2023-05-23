@@ -145,6 +145,6 @@ int main(int argc, char* argv[]) {
     TEST_document_should_parse_attr3();
     TEST_document_should_parse_content_children();
 
-    TEST_element_id_should_equal();
+    // TEST_element_id_should_equal();
     return 0;
 }

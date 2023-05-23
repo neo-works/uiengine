@@ -32,8 +32,6 @@ typedef struct HtmlDomElement {
     char *id;
     char *name;
 
-    DListNode node;
-
     TrieTreeNode idNode;
     TrieTreeNode nameNode;
 
@@ -43,13 +41,13 @@ typedef struct HtmlDomElement {
 } HtmlDomElement;
 
 typedef struct HtmlContentElement {
-    DListNode node;
     char *content;
 } HtmlContentElement;
 
 typedef struct HtmlElement {
     HtmlElementType type;
     struct HtmlElement *parent;
+    DListNode node;
     union {
         HtmlDomElement dom;
         HtmlContentElement content;
@@ -77,6 +75,7 @@ char *document_parse_str(char *doc, char *bound);
 char *document_parse_tag(char *doc);
 char *document_parse_childrens(HtmlElement *children, char *doc);
 char *document_parse_attributes(HtmlAttribute* attr, char *doc);
+char *document_parse_element(HtmlElement *element, char *doc);
 void document_dump(HtmlDocument *document);
 struct HtmlDocument *document_load(const char *doc);
 

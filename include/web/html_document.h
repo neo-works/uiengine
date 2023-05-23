@@ -1,6 +1,7 @@
 #ifndef __UI_WEB_HTML_PARSER_H__
 #define __UI_WEB_HTML_PARSER_H__
 
+#include <stdint.h>
 #include "../dlist.h"
 #include "../trie_tree.h"
 
@@ -23,8 +24,9 @@ typedef struct HtmlAttribute {
 } HtmlAttribute;
 
 typedef enum HtmlElementType {
-    HTML_ELEMENT_TYPE_DOM,
-    HTML_ELEMENT_TYPE_CONTENT
+    HTML_ELEMENT_TYPE_DOM = 0,
+    HTML_ELEMENT_TYPE_CONTENT,
+    HTML_ELEMENT_TYPE_MAX
 } HtmlElementType;
 
 typedef struct HtmlDomElement {
@@ -66,6 +68,8 @@ typedef struct HtmlDocument {
 
     HtmlDocumentGetElementById get_element_by_id;
     HtmlDocumentGetElementByName get_element_by_name;
+
+    uint32_t dumpDepth;
     HtmlDocumentDump dump;
 } HtmlDocument;
 

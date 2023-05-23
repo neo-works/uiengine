@@ -120,10 +120,8 @@ char *document_parse_content(HtmlElement *content, char *doc) {
 char *document_parse_childrens(HtmlElement *children, char *doc) {
     HtmlElement *head = children;
     bool first = true;
-    while (*doc != '\0' &&
-           (*(doc + 1) != '\0') &&
-           (*doc != '<') &&
-           (*(doc + 1) != '/')) {
+    while ((*doc != '\0') &&
+           (*(doc + 1) != '\0')) {
             doc = document_consume_whitespace(doc);
             if (!first) {
                 children = (HtmlElement*)mem_alloc(sizeof(HtmlElement));
@@ -132,7 +130,10 @@ char *document_parse_childrens(HtmlElement *children, char *doc) {
                 children->dom.childrens = NULL;
                 children->parent = NULL;
             }
-            if ((*doc == '<') && (*(doc + 1) != '/')) {
+            if ((*doc == '<')) {
+                if (*(doc + 1) == '/') {
+                    break;
+                }
                 children->type = HTML_ELEMENT_TYPE_DOM;
                 doc = document_parse_element(children, doc);
             } else {

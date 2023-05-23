@@ -112,7 +112,7 @@ char *document_parse_childrens(HtmlElement *children, char *doc) {
 
 /**
  * @brief parse attribute
- * {KEY}{WHITESPACE}={WHITESPACE}{"/'}{VALUE}{"/'}
+ * {KEY}{WHITESPACE}={WHITESPACE}{"/'}{VALUE}{"/'}{WHITESPACE}
  * @param doc 
  * @return HtmlAttribute* 
  */
@@ -150,15 +150,16 @@ char *document_parse_attributes(HtmlAttribute* attr, char *doc) {
 
 /**
  * @brief parse element
- * <{TAG} {ATTRIBUTES}>{CHILDRENS}</{TAG}>
+ * <{TAG}{WHITESPACE}{ATTRIBUTES}{WHITESPACE}>{CHILDRENS}</{TAG}>
  * @param doc 
  * @return HtmlElement* 
  */
 HtmlElement *document_parse_element(char *doc) {
-    HtmlElement *element = (HtmlDocument *)mem_alloc(sizeof(HtmlDocument));
+    HtmlElement *element = (HtmlElement *)mem_alloc(sizeof(HtmlElement));
     INIT_DNODE(element->dom.node);
     element->dom.attributes = NULL;
     element->dom.childrens = NULL;
+    element->parent = NULL;
 
     doc = document_consume_whitespace(doc);
     doc = document_match_and_consume(doc, "<");

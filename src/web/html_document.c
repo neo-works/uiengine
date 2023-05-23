@@ -2,6 +2,8 @@
 #include "../../include/mem/mem.h"
 #include "../../include/assert.h"
 
+const char *ElementTypeName[HTML_ELEMENT_TYPE_MAX] = {"dom", "text"};
+
 HtmlElement* document_default_get_element_by_name(struct HtmlDocument *doc, char *name) {
     return NULL;
 }
@@ -10,8 +12,49 @@ HtmlElement* document_default_get_element_by_id(struct HtmlDocument *doc, char *
     return NULL;
 }
 
-void document_default_dump(struct HtmlDocument *doc) {
+void document_dump_element_attr(HtmlAttribute *attr) {
+    if (attr == NULL) {
+        return;
+    }
+    DListNode *node = &attr->node;
+    while (node != NULL) {
+        HtmlAttribute *attribute = ContainerOf(node, HtmlAttribute, node);
+        printf("\'%s'='%s'", attr->key, attr->val);
+        if (node->right != NULL) {
+            printf(", ");
+        }
+        node = node->right;
+    }
+}
 
+static void document_dump_element(HtmlDocument* doc, HtmlElement *element) {
+    if (element == NULL){
+        return;
+    }
+
+    DListNode *node = &element->node;
+    while (node != NULL) {
+        HtmlElement *elem = ContainerOf(node, HtmlElement, node);
+        for (uint32_t i = 0; i < doc->dumpDepth; i++) {
+            printf("  ");
+        }
+        if (elem->type == HTML_ELEMENT_TYPE_DOM) {
+            printf("[%s] %s(", ElementTypeName[elem->type], elem->dom.tag);
+            document_dump_element_attr(elem->dom.attributes);
+            printf(")\n");
+            doc->dumpDepth++;
+            document_dump_element(doc, elem->dom.childrens);
+            doc->dumpDepth--;
+        } else {
+            printf("[%s] \"%s\"\n", ElementTypeName[elem->type], elem->dom.tag);
+        }
+        node = &node->right;
+    }
+}
+
+void document_default_dump(struct HtmlDocument *doc) {
+    doc->dumpDepth = 0;
+    document_dump_element(doc, doc->body);
 }
 
 void document_init(HtmlDocument *document) {
@@ -235,10 +278,6 @@ void document_parse(HtmlDocument *document, char *doc) {
     element->parent = NULL;
     document_parse_element(element, doc);
     document->body = element;
-}
-
-void document_dump(HtmlDocument *document) {
-    return;
 }
 
 struct HtmlDocument *document_load(const char *doc) {

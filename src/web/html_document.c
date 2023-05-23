@@ -99,14 +99,51 @@ char *document_parse_tag(char *doc) {
     return tag;
 }
 
+char *document_parse_content(HtmlElement *content, char *doc) {
+    char* text = document_parse_str_until(doc, "<");
+    INIT_DNODE(content->node);
+    content->dom.attributes = NULL;
+    content->dom.childrens = NULL;
+    content->type = HTML_ELEMENT_TYPE_CONTENT;
+    content->content.content = text;
+    doc = document_match_and_consume(doc, text);
+    return doc;
+}
+
+/**
+ * @brief ({WHITESPACE}({TEXT})[0:1]{WHITESPACE}({ELEMENT})*)* </
+ * 
+ * @param children 
+ * @param doc 
+ * @return char* 
+ */
 char *document_parse_childrens(HtmlElement *children, char *doc) {
-    char* content = document_parse_str_until(doc, "<");
-    INIT_DNODE(children->dom.node);
-    children->dom.attributes = NULL;
-    children->dom.childrens = NULL;
-    children->type = HTML_ELEMENT_TYPE_CONTENT;
-    children->content.content = content;
-    doc = document_match_and_consume(doc, content);
+    HtmlElement *head = children;
+    bool first = true;
+    while (*doc != '\0' &&
+           (*(doc + 1) != '\0') &&
+           (*doc != '<') &&
+           (*(doc + 1) != '/')) {
+            doc = document_consume_whitespace(doc);
+            if (!first) {
+                children = (HtmlElement*)mem_alloc(sizeof(HtmlElement));
+                INIT_DNODE(children->node);
+                children->dom.attributes = NULL;
+                children->dom.childrens = NULL;
+                children->parent = NULL;
+            }
+            if ((*doc == '<') && (*(doc + 1) != '/')) {
+                children->type = HTML_ELEMENT_TYPE_DOM;
+                doc = document_parse_element(children, doc);
+            } else {
+                doc = document_parse_content(children, doc);
+            }
+            if (!first) {
+                dlist_insert(&head->node, &children->node);
+            }
+            first = false;
+    }
+    children = head;
     return doc;
 }
 
@@ -154,13 +191,7 @@ char *document_parse_attributes(HtmlAttribute* attr, char *doc) {
  * @param doc 
  * @return HtmlElement* 
  */
-HtmlElement *document_parse_element(char *doc) {
-    HtmlElement *element = (HtmlElement *)mem_alloc(sizeof(HtmlElement));
-    INIT_DNODE(element->dom.node);
-    element->dom.attributes = NULL;
-    element->dom.childrens = NULL;
-    element->parent = NULL;
-
+char *document_parse_element(HtmlElement *element, char *doc) {
     doc = document_consume_whitespace(doc);
     doc = document_match_and_consume(doc, "<");
     element->dom.tag = document_parse_tag(doc);
@@ -177,6 +208,10 @@ HtmlElement *document_parse_element(char *doc) {
         goto close_tag;
     } else {
         HtmlElement *children = (HtmlElement*)mem_alloc(sizeof(HtmlElement));
+        INIT_DNODE(children->node);
+        children->dom.attributes = NULL;
+        children->dom.childrens = NULL;
+        children->parent = NULL;
         doc = document_parse_childrens(children, doc);
         element->dom.childrens = children;
     }
@@ -185,13 +220,20 @@ close_tag:
     doc = document_match_and_consume(doc, "</");
     doc = document_match_and_consume(doc, element->dom.tag);
     doc = document_match_and_consume(doc ,">");
-    return element;
+
+    return doc;
 }
 
 void document_parse(HtmlDocument *document, char *doc) {
     ASSERT_NOT_NULL(document);
     ASSERT_NOT_NULL(doc);
-    document->body = document_parse_element(doc);
+    HtmlElement *element = (HtmlElement *)mem_alloc(sizeof(HtmlElement));
+    INIT_DNODE(element->node);
+    element->dom.attributes = NULL;
+    element->dom.childrens = NULL;
+    element->parent = NULL;
+    document_parse_element(element, doc);
+    document->body = element;
 }
 
 void document_dump(HtmlDocument *document) {

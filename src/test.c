@@ -181,6 +181,28 @@ DEFINE_TEST_CASE(document_should_parse_dom_children2) {
     return 0;
 }
 
+DEFINE_TEST_CASE(document_should_parse_dom_children_with_attr) {
+    char *doc = "<body id=\"test_id\"><p id=\"name\">text</p></body>";
+    HtmlDocument *document = document_load(doc);
+    ASSERT_NOT_NULL(document);
+    ASSERT_NOT_NULL(document->body);
+    ASSERT_NOT_NULL(document->body->dom.attributes);
+    ASSERT_NOT_NULL(document->body->dom.attributes->key);
+    ASSERT_STR_EQUAL(document->body->dom.attributes->key, "id");
+    ASSERT_NOT_NULL(document->body->dom.attributes->val);
+    ASSERT_STR_EQUAL(document->body->dom.attributes->val, "test_id");
+    ASSERT_NOT_NULL(document->body->dom.childrens);
+    ASSERT_STR_EQUAL(document->body->dom.childrens->dom.tag, "p");
+    ASSERT_NOT_NULL(document->body->dom.childrens->dom.childrens);
+    ASSERT_STR_EQUAL(document->body->dom.childrens->dom.childrens->content.content, "text");
+    ASSERT_NOT_NULL(document->body->dom.childrens->dom.attributes);
+    ASSERT_NOT_NULL(document->body->dom.childrens->dom.attributes->key);
+    ASSERT_STR_EQUAL(document->body->dom.childrens->dom.attributes->key, "id");
+    ASSERT_NOT_NULL(document->body->dom.childrens->dom.attributes->val);
+    ASSERT_STR_EQUAL(document->body->dom.childrens->dom.attributes->val, "name");
+    return 0;
+}
+
 int main(int argc, char* argv[]) {
     // RUN_ALL_TESTS();
     TEST_document_should_consume_whitespace();
@@ -193,6 +215,7 @@ int main(int argc, char* argv[]) {
     TEST_document_should_parse_content_children();
     TEST_document_should_parse_dom_children();
     TEST_document_should_parse_dom_children2();
+    TEST_document_should_parse_dom_children_with_attr();
 
     // TEST_element_id_should_equal();
     return 0;

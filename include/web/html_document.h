@@ -49,6 +49,7 @@ typedef struct HtmlContentElement {
 
 typedef struct HtmlElement {
     HtmlElementType type;
+    struct HtmlElement *parent;
     union {
         HtmlDomElement dom;
         HtmlContentElement content;

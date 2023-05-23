@@ -151,6 +151,36 @@ DEFINE_TEST_CASE(document_should_parse_dom_children) {
     return 0;
 }
 
+DEFINE_TEST_CASE(document_should_parse_dom_children2) {
+    char *doc = "<body id=\"test_id\"><p>text</p><button>click</button></body>";
+    HtmlDocument *document = document_load(doc);
+    ASSERT_NOT_NULL(document);
+    ASSERT_NOT_NULL(document->body);
+    ASSERT_NOT_NULL(document->body->dom.attributes);
+    ASSERT_NOT_NULL(document->body->dom.attributes->key);
+    ASSERT_STR_EQUAL(document->body->dom.attributes->key, "id");
+    ASSERT_NOT_NULL(document->body->dom.attributes->val);
+    ASSERT_STR_EQUAL(document->body->dom.attributes->val, "test_id");
+    ASSERT_NOT_NULL(document->body->dom.childrens);
+    ASSERT_STR_EQUAL(document->body->dom.childrens->dom.tag, "p");
+    ASSERT_NOT_NULL(document->body->dom.childrens->dom.childrens);
+    ASSERT_STR_EQUAL(document->body->dom.childrens->dom.childrens->content.content, "text");
+
+    HtmlElement* children = document->body->dom.childrens;
+    HtmlElement *children2 = ContainerOf(children->node.right, HtmlElement, node);
+    ASSERT_NOT_NULL(children2);
+    ASSERT_NOT_NULL(children2->dom.tag);
+    ASSERT_STR_EQUAL(children2->dom.tag, "button");
+
+    ASSERT_NOT_NULL(children2);
+    ASSERT_NOT_NULL(children2->dom.tag);
+    ASSERT_STR_EQUAL(children2->dom.tag, "button");
+
+    ASSERT_NOT_NULL(children2->dom.childrens);
+    ASSERT_STR_EQUAL(children2->dom.childrens->content.content, "click");
+    return 0;
+}
+
 int main(int argc, char* argv[]) {
     // RUN_ALL_TESTS();
     TEST_document_should_consume_whitespace();
@@ -162,6 +192,7 @@ int main(int argc, char* argv[]) {
     TEST_document_should_parse_attr3();
     TEST_document_should_parse_content_children();
     TEST_document_should_parse_dom_children();
+    TEST_document_should_parse_dom_children2();
 
     // TEST_element_id_should_equal();
     return 0;

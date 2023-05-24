@@ -69,7 +69,6 @@ typedef struct HtmlDocument {
     HtmlDocumentGetElementById get_element_by_id;
     HtmlDocumentGetElementByName get_element_by_name;
 
-    uint32_t dumpDepth;
     HtmlDocumentDump dump;
 } HtmlDocument;
 
@@ -80,7 +79,6 @@ char *document_parse_tag(char *doc);
 char *document_parse_childrens(HtmlElement *children, char *doc);
 char *document_parse_attributes(HtmlAttribute* attr, char *doc);
 char *document_parse_element(HtmlElement *element, char *doc);
-void document_dump(HtmlDocument *document);
 struct HtmlDocument *document_load(const char *doc);
 
 #endif /* __UI_WEB_HTML_PARSER_H__ */

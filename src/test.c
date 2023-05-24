@@ -155,29 +155,34 @@ DEFINE_TEST_CASE(document_should_parse_dom_children2) {
     char *doc = "<body id=\"test_id\"><p>text</p><button>click</button></body>";
     HtmlDocument *document = document_load(doc);
     ASSERT_NOT_NULL(document);
-    ASSERT_NOT_NULL(document->body);
-    ASSERT_NOT_NULL(document->body->dom.attributes);
-    ASSERT_NOT_NULL(document->body->dom.attributes->key);
-    ASSERT_STR_EQUAL(document->body->dom.attributes->key, "id");
-    ASSERT_NOT_NULL(document->body->dom.attributes->val);
-    ASSERT_STR_EQUAL(document->body->dom.attributes->val, "test_id");
-    ASSERT_NOT_NULL(document->body->dom.childrens);
-    ASSERT_STR_EQUAL(document->body->dom.childrens->dom.tag, "p");
-    ASSERT_NOT_NULL(document->body->dom.childrens->dom.childrens);
-    ASSERT_STR_EQUAL(document->body->dom.childrens->dom.childrens->content.content, "text");
 
-    HtmlElement* children = document->body->dom.childrens;
+    HtmlElement *element = document->body;
+    ASSERT_NOT_NULL(element);
+    ASSERT_NOT_NULL(element->dom.attributes);
+    ASSERT_NOT_NULL(element->dom.attributes->key);
+    ASSERT_STR_EQUAL(element->dom.attributes->key, "id");
+    ASSERT_NOT_NULL(element->dom.attributes->val);
+    ASSERT_STR_EQUAL(element->dom.attributes->val, "test_id");
+
+    HtmlElement* children = element->dom.childrens;
+    ASSERT_NOT_NULL(children);
+    ASSERT_STR_EQUAL(children->dom.tag, "p");
+
+    HtmlElement* children_children = children->dom.childrens;
+    ASSERT_NOT_NULL(children_children);
+    ASSERT_STR_EQUAL(children_children->content.content, "text");
+    ASSERT_NULL(children_children->node.right);
+
     HtmlElement *children2 = ContainerOf(children->node.right, HtmlElement, node);
     ASSERT_NOT_NULL(children2);
     ASSERT_NOT_NULL(children2->dom.tag);
     ASSERT_STR_EQUAL(children2->dom.tag, "button");
+    ASSERT_NULL(children2->node.right);
 
-    ASSERT_NOT_NULL(children2);
-    ASSERT_NOT_NULL(children2->dom.tag);
-    ASSERT_STR_EQUAL(children2->dom.tag, "button");
-
-    ASSERT_NOT_NULL(children2->dom.childrens);
-    ASSERT_STR_EQUAL(children2->dom.childrens->content.content, "click");
+    HtmlElement *children2_children = children2->dom.childrens;
+    ASSERT_NOT_NULL(children2_children);
+    ASSERT_STR_EQUAL(children2_children->content.content, "click");
+    ASSERT_NULL(children2_children->node.right);
     return 0;
 }
 

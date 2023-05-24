@@ -27,34 +27,45 @@ void document_dump_element_attr(HtmlAttribute *attr) {
     }
 }
 
-static void document_dump_element(HtmlDocument* doc, HtmlElement *element) {
+static void document_dump_element(int depth, char *prefix, HtmlDocument* doc, HtmlElement *element) {
     if (element == NULL){
         return;
     }
+    if (element->type == HTML_ELEMENT_TYPE_DOM) {
+            printf("%s[%s] %s(", prefix, ElementTypeName[element->type], element->dom.tag);
+            document_dump_element_attr(element->dom.attributes);
+            printf(")\n");
+    } else {
+            printf("%s[%s] \"%s\"\n", prefix, ElementTypeName[element->type], element->dom.tag);
+    }
 
-    DListNode *node = &element->node;
+    if (element->dom.childrens == NULL) {
+        return;
+    }
+    DListNode *node = &element->dom.childrens->node;
     while (node != NULL) {
+        for (int i = 0; i < depth; i++){ printf("│  ");} 
         HtmlElement *elem = ContainerOf(node, HtmlElement, node);
-        for (uint32_t i = 0; i < doc->dumpDepth; i++) {
-            printf("  ");
-        }
         if (elem->type == HTML_ELEMENT_TYPE_DOM) {
-            printf("[%s] %s(", ElementTypeName[elem->type], elem->dom.tag);
+            printf("%s[%s] %s(", prefix, ElementTypeName[elem->type], elem->dom.tag);
             document_dump_element_attr(elem->dom.attributes);
             printf(")\n");
-            doc->dumpDepth++;
-            document_dump_element(doc, elem->dom.childrens);
-            doc->dumpDepth--;
+            depth++;
+            if (node->right != NULL) {
+                document_dump_element(depth, "├──", doc, elem->dom.childrens);
+            } else {
+                document_dump_element(depth, "└──", doc, elem->dom.childrens);
+            }
+            depth--;
         } else {
-            printf("[%s] \"%s\"\n", ElementTypeName[elem->type], elem->dom.tag);
+            printf("%s[%s] \"%s\"\n", prefix, ElementTypeName[elem->type], elem->dom.tag);
         }
-        node = &node->right;
+        node = node->right;
     }
 }
 
 void document_default_dump(struct HtmlDocument *doc) {
-    doc->dumpDepth = 0;
-    document_dump_element(doc, doc->body);
+    document_dump_element(1, "", doc, doc->body);
 }
 
 void document_init(HtmlDocument *document) {

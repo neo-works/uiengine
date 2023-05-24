@@ -2,8 +2,7 @@
 #include "include/web/html_document.h"
 
 int main(int argc, char* argv[]) {
-    printf("DocumentDump:\n");
-    char *doc = "<body id=\"test_id\"><p>text</p><button>click</button></body>";
+    char *doc = "<body id=\"test_id\"><p background=\"rgb(10,20,30)\">text</p><button width=\"20px\" onclick=\"hello\">click</button></body>";
     HtmlDocument* document =  document_load(doc);
     document->dump(document);
     return 0;

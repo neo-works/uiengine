@@ -5,6 +5,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define ASSERT_NULL(element)    \
+    if (element != NULL) {  \
+        printf("ASSERT_NULL(failed): '"#element"' is not NULL\n");  \
+        exit(1);    \
+    }
+
 #define ASSERT_NOT_NULL(element)    \
     if (element == NULL) {  \
         printf("ASSERT_NOT_NULL(failed): '"#element"' is NULL\n");  \

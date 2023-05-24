@@ -14,12 +14,13 @@ HtmlElement* document_default_get_element_by_id(struct HtmlDocument *doc, char *
 
 void document_dump_element_attr(HtmlAttribute *attr) {
     if (attr == NULL) {
+        printf("null");
         return;
     }
     DListNode *node = &attr->node;
     while (node != NULL) {
         HtmlAttribute *attribute = ContainerOf(node, HtmlAttribute, node);
-        printf("\'%s'='%s'", attr->key, attr->val);
+        printf("%s='%s'", attr->key, attr->val);
         if (node->right != NULL) {
             printf(", ");
         }
@@ -27,45 +28,51 @@ void document_dump_element_attr(HtmlAttribute *attr) {
     }
 }
 
+//[body](id='test_id')
+//   ├──[p](background='rgb(10,20,30)')
+//   │   └── "text"
+//   ├──[div](null)
+//   │   ├──[jjj](null)
+//   │   └──"124"
+//   └──[button](width='20px', width='20px')
+//       └──"click"
 static void document_dump_element(int depth, char *prefix, HtmlDocument* doc, HtmlElement *element) {
     if (element == NULL){
         return;
     }
-    if (element->type == HTML_ELEMENT_TYPE_DOM) {
-            printf("%s[%s] %s(", prefix, ElementTypeName[element->type], element->dom.tag);
-            document_dump_element_attr(element->dom.attributes);
-            printf(")\n");
-    } else {
-            printf("%s[%s] \"%s\"\n", prefix, ElementTypeName[element->type], element->dom.tag);
-    }
 
-    if (element->dom.childrens == NULL) {
+    for (int i = 0; i < depth; i++){ 
+        printf("│   ");
+    } 
+    if (element->type == HTML_ELEMENT_TYPE_CONTENT) {
+        printf("%s \"%s\"\n", prefix, element->content.content);
         return;
     }
-    DListNode *node = &element->dom.childrens->node;
+
+    printf("%s[%s](", prefix, element->dom.tag);
+    document_dump_element_attr(element->dom.attributes);
+    printf(")\n");
+
+    HtmlElement *children = element->dom.childrens;
+    if (children == NULL) {
+        return;
+    }
+    DListNode *node = &children->node;
     while (node != NULL) {
-        for (int i = 0; i < depth; i++){ printf("│  ");} 
         HtmlElement *elem = ContainerOf(node, HtmlElement, node);
-        if (elem->type == HTML_ELEMENT_TYPE_DOM) {
-            printf("%s[%s] %s(", prefix, ElementTypeName[elem->type], elem->dom.tag);
-            document_dump_element_attr(elem->dom.attributes);
-            printf(")\n");
-            depth++;
-            if (node->right != NULL) {
-                document_dump_element(depth, "├──", doc, elem->dom.childrens);
-            } else {
-                document_dump_element(depth, "└──", doc, elem->dom.childrens);
-            }
-            depth--;
+        depth++;
+        if (node->right != NULL) {
+            document_dump_element(depth, "├──", doc, elem);
         } else {
-            printf("%s[%s] \"%s\"\n", prefix, ElementTypeName[elem->type], elem->dom.tag);
+            document_dump_element(depth, "└──", doc, elem);
         }
+        depth--;
         node = node->right;
     }
 }
 
 void document_default_dump(struct HtmlDocument *doc) {
-    document_dump_element(1, "", doc, doc->body);
+    document_dump_element(0, "", doc, doc->body);
 }
 
 void document_init(HtmlDocument *document) {

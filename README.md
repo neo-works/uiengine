@@ -6,7 +6,7 @@
 
 ## UI & Renderer pipeline
 ```
-vsync  thread:      vsync        vsync        vsync
-ui     thread:      frame1       frame2       frame3
-render thread:                   frame1       frame2
+vsync  thread:      vsync        vsync                           vsync
+ui     thread:      dom1         (event)(update)(frame2)         (event)(update)(frame3)
+render thread:                   frame1                          frame2
 ```

@@ -81,13 +81,17 @@ void document_init(HtmlDocument *document) {
     document->dump = document_default_dump;
 }
 
-static iswhitespace(char c) {
+static inline iswhitespace(char c) {
     return (c == ' ') || (c == '\t');
 }
 
-static isalpha(char c) {
+static inline isalpha(char c) {
     return ((c >= 'a') && (c <= 'z')) || 
            ((c >= 'A') && (c <= 'Z'));
+}
+
+static inline isnumeric(char c) {
+    return ((c >= '0') && (c <= '9'));
 }
 
 char* document_consume_whitespace(char *doc) {
@@ -150,7 +154,7 @@ char *document_parse_tag(char *doc) {
     memset(tag, 0, 0x20);
     uint32_t idx = 0;
     while ((*doc != '\0')) {
-        if (isalpha(*doc)) {
+        if (isalpha(*doc) || isnumeric(*doc)) {
             tag[idx++] = *doc;
             doc++;
         } else {

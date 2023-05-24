@@ -20,7 +20,7 @@ void document_dump_element_attr(HtmlAttribute *attr) {
     DListNode *node = &attr->node;
     while (node != NULL) {
         HtmlAttribute *attribute = ContainerOf(node, HtmlAttribute, node);
-        printf("%s='%s'", attr->key, attr->val);
+        printf("%s='%s'", attribute->key, attribute->val);
         if (node->right != NULL) {
             printf(", ");
         }
@@ -72,7 +72,7 @@ static void document_dump_element(int depth, char *prefix, HtmlDocument* doc, Ht
 }
 
 void document_default_dump(struct HtmlDocument *doc) {
-    document_dump_element(0, "", doc, doc->body);
+    document_dump_element(-1, "", doc, doc->body);
 }
 
 void document_init(HtmlDocument *document) {

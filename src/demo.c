@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include "include/mem/mem.h"
 #include "include/web/html_document.h"
+#include "include/renderer/renderer.h"
+#include "include/renderer/component/button.h"
+#include "src/renderer/backend/canvas/backend_canvas.h"
 
 int main(int argc, char* argv[]) {
     char *doc = "<body id=\"test_id\">"
@@ -24,5 +27,13 @@ int main(int argc, char* argv[]) {
     HtmlDocument* document = document_load(doc);
     document->dump(document);
     printf("\nMem Usage: %d bytes\n", mem_get_usage());
+
+    Button *button = button_create();
+    Renderer *renderer = render_create();
+    RenderBackend* canvas = backend_canvas_create();
+    renderer->registerBackend(renderer, canvas);
+    renderer->setRootRenderNode(renderer, &button->renderNode);
+    renderer->render(renderer);
+
     return 0;
 }

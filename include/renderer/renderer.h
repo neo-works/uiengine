@@ -3,46 +3,25 @@
 
 #include <stdint.h>
 #include <stddef.h>
-
-typedef struct Position {
-    uint32_t x;
-    uint32_t y;
-} Position;
-
-typedef struct Size {
-    uint32_t width;
-    uint32_t height;
-} Size;
-
-typedef struct Padding {
-    uint32_t left;
-    uint32_t right;
-    uint32_t top;
-    uint32_t bottom;
-} Padding;
-
-typedef struct Margin {
-    uint32_t left;
-    uint32_t right;
-    uint32_t top;
-    uint32_t bottom;
-} Margin;
-
-typedef struct Color {
-    uint8_t a;
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-} Color;
+#include "type.h"
+#include "render_node.h"
 
 typedef void (*RenderBackendDrawRect)(struct RenderBackend *, Position, Size, Color);
 typedef struct RenderBackend {
     RenderBackendDrawRect drawRect;
 } RenderBackend;
 
+typedef void (*RendererRegisterBackend)(struct Renderer *, RenderBackend *);
+typedef void (*RendererSetRootRenderNode)(struct Renderer *, struct RenderNode *);
 typedef void (*RendererDrawRect)(struct Renderer *, Position, Size, Color);
+typedef void (*RendererRender)(struct Renderer *);
 typedef struct Renderer {
     RenderBackend *renderBackend;
+    struct RenderNode *rootNode;
+
+    RendererRegisterBackend registerBackend;
+    RendererSetRootRenderNode setRootRenderNode;
+    RendererRender render;
 
     RendererDrawRect drawRect;
 } Renderer;

@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include "../dlist.h"
+#include "type.h"
 #include "renderer.h"
 
 typedef void (*Render)(struct RenderNode *, struct Renderer *);
@@ -21,6 +22,6 @@ typedef struct RenderNode {
     Render render;
 } RenderNode;
 
-void render_child(RenderNode *renderNode, Renderer *renderer);
+void render_child(RenderNode *renderNode, struct Renderer *renderer);
 
 #endif /* __UIENGINE_UI_VIEW_H__ */

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "include/mem/mem.h"
 #include "include/web/html_document.h"
 
 int main(int argc, char* argv[]) {
@@ -20,7 +21,8 @@ int main(int argc, char* argv[]) {
                         "<a href=\"www.baidu.com\">go</a>"
                     "</div>"
                 "</body>";
-    HtmlDocument* document =  document_load(doc);
+    HtmlDocument* document = document_load(doc);
     document->dump(document);
+    printf("\nMem Usage: %d bytes\n", mem_get_usage());
     return 0;
 }

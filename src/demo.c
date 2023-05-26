@@ -3,7 +3,7 @@
 #include "include/web/html_document.h"
 #include "include/renderer/renderer.h"
 #include "include/renderer/component/button.h"
-#include "src/renderer/backend/canvas/backend_canvas.h"
+#include "src/renderer/backend/sdl2/backend_sdl2.h"
 
 int main(int argc, char* argv[]) {
     char *doc = "<body id=\"test_id\">"
@@ -30,9 +30,12 @@ int main(int argc, char* argv[]) {
 
     Button *button = button_create();
     Renderer *renderer = render_create();
-    RenderBackend* canvas = backend_canvas_create();
-    renderer->registerBackend(renderer, canvas);
+
+    RenderBackend* sdl2 = backend_sdl2_create();
+
+    renderer->registerBackend(renderer, sdl2);
     renderer->setRootRenderNode(renderer, &button->renderNode);
+    renderer->init(renderer);
     renderer->render(renderer);
 
     return 0;

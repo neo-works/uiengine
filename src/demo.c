@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <unistd.h>
 #include "include/mem/mem.h"
 #include "include/web/html_document.h"
 #include "include/renderer/renderer.h"
@@ -36,6 +37,7 @@ int main(int argc, char* argv[]) {
     renderer->registerBackend(renderer, sdl2);
     renderer->setRootRenderNode(renderer, &button->renderNode);
     renderer->init(renderer);
+
     renderer->render(renderer);
 
     return 0;

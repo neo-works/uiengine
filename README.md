@@ -15,7 +15,7 @@ render thread:                   frame1                          frame2
 2:
 ```
 vsync  thread:      vsync        vsync                           vsync
-ui     thread:      frame        (event)(update)(frame)         (event)(update)(frame)
+ui     thread:      frame        (event)(update)(frame)          (event)(update)(frame)
                                      |
                                      | put
                                      |

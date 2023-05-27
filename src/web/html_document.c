@@ -75,10 +75,15 @@ void document_default_dump(struct HtmlDocument *doc) {
     document_dump_element(-1, "", doc, doc->body);
 }
 
+RenderNode *document_build_render_tree(struct HtmlDocument *document) {
+    return NULL;
+}
+
 void document_init(HtmlDocument *document) {
     document->get_element_by_id = document_default_get_element_by_id;
     document->get_element_by_name = document_default_get_element_by_name;
     document->dump = document_default_dump;
+    document->buildRenderTree = document_build_render_tree;
 }
 
 static inline iswhitespace(char c) {

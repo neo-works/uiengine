@@ -2,6 +2,8 @@
 #include "../../include/mem/mem.h"
 #include "../../include/assert.h"
 
+#include "../../include/renderer/component/button.h"
+
 const char *ElementTypeName[HTML_ELEMENT_TYPE_MAX] = {"dom", "text"};
 
 HtmlElement* document_default_get_element_by_name(struct HtmlDocument *doc, char *name) {
@@ -36,7 +38,7 @@ void document_dump_element_attr(HtmlAttribute *attr) {
 //   │   └──"124"
 //   └──[button](width='20px', width='20px')
 //       └──"click"
-static void document_dump_element(int depth, char *prefix, HtmlDocument* doc, HtmlElement *element) {
+static void document_dump_element(int depth, char *prefix, HtmlElement *element) {
     if (element == NULL){
         return;
     }
@@ -62,9 +64,9 @@ static void document_dump_element(int depth, char *prefix, HtmlDocument* doc, Ht
         HtmlElement *elem = ContainerOf(node, HtmlElement, node);
         depth++;
         if (node->right != NULL) {
-            document_dump_element(depth, "├──", doc, elem);
+            document_dump_element(depth, "├──", elem);
         } else {
-            document_dump_element(depth, "└──", doc, elem);
+            document_dump_element(depth, "└──", elem);
         }
         depth--;
         node = node->right;
@@ -72,11 +74,57 @@ static void document_dump_element(int depth, char *prefix, HtmlDocument* doc, Ht
 }
 
 void document_default_dump(struct HtmlDocument *doc) {
-    document_dump_element(-1, "", doc, doc->body);
+    document_dump_element(-1, "", doc->body);
+}
+
+RenderNode *document_build_render_element(HtmlElement *element) {
+    if (element == NULL) {
+        return NULL;
+    }
+
+    Button *button = button_create();
+    RenderNode *renderNode = &button->renderNode;
+    INIT_DNODE(renderNode->node);
+
+    RenderNode *head = renderNode;
+
+    bool first = true;
+    DListNode *node = &element->node;
+    while (node != NULL) {
+        HtmlElement *elem = ContainerOf(node, HtmlElement, node);
+        if (!first) {
+            Button *button = button_create();
+            renderNode = &button->renderNode;
+            INIT_DNODE(renderNode->node);
+        }
+
+        renderNode->size.width = 100;
+        renderNode->size.height = 200;
+        renderNode->pos.x = 10;
+        renderNode->pos.y = 10;
+
+        renderNode->backgroundColor.r = 255;
+        renderNode->backgroundColor.g = 0;
+        renderNode->backgroundColor.b = 255;
+        renderNode->backgroundColor.a = 0;
+
+        renderNode->children = document_build_render_element(elem->dom.childrens);
+
+        if (!first) {
+            dlist_insert(&head->node, &renderNode->node);
+        }
+
+        first = false;
+        node = node->right;
+    }
+    return head;
 }
 
 RenderNode *document_build_render_tree(struct HtmlDocument *document) {
-    return NULL;
+    RenderNode *rootNode = (RenderNode *)mem_alloc(sizeof(RenderNode));
+    INIT_DNODE(rootNode->node);
+    rootNode->children = document_build_render_element(document->body);
+    return rootNode;
 }
 
 void document_init(HtmlDocument *document) {

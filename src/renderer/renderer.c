@@ -52,6 +52,42 @@ void renderer_default_destroy(Renderer *renderer) {
     }
 }
 
+static void renderer_dump_node(int depth, char *prefix, RenderNode *renderNode) {
+    if (renderNode == NULL){
+        return;
+    }
+
+    for (int i = 0; i < depth; i++){ 
+        printf("│   ");
+    }
+
+    printf("<Node>(x:%d,y:%d)(w:%d, h:%d)(r:%d,g:%d,b:%d)\n",
+            renderNode->pos.x, renderNode->pos.y,
+            renderNode->size.width, renderNode->size.height,
+            renderNode->backgroundColor.r, renderNode->backgroundColor.g, renderNode->backgroundColor.b);
+
+    RenderNode *children = renderNode->children;
+    if (children == NULL) {
+        return;
+    }
+    DListNode *node = &children->node;
+    while (node != NULL) {
+        RenderNode *elem = ContainerOf(node, RenderNode, node);
+        depth++;
+        if (node->right != NULL) {
+            renderer_dump_node(depth, "├──", elem);
+        } else {
+            renderer_dump_node(depth, "└──", elem);
+        }
+        depth--;
+        node = node->right;
+    }
+}
+
+void renderer_default_dump(Renderer *renderer) {
+    renderer_dump_node(-1, "", renderer->rootNode);
+}
+
 Renderer *render_create() {
     Renderer *renderer = (Renderer *)mem_alloc(sizeof(Renderer));
     renderer->registerBackend = renderer_default_register_backend;
@@ -60,6 +96,8 @@ Renderer *render_create() {
     renderer->processEvent = renderer_default_process_event;
     renderer->setRootRenderNode = renderer_default_set_root_render_node;
     renderer->destroy = renderer_default_destroy;
+
+    renderer->dump = renderer_default_dump;
 
     renderer->drawRect = renderer_default_draw_rect;
     return renderer;

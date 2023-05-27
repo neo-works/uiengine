@@ -40,6 +40,7 @@ typedef void (*RendererRender)(struct Renderer *);
 typedef void (*RendererProcessEvent)(struct Renderer *);
 typedef void (*RendererInit)(struct Renderer *);
 typedef void (*RendererDestroy)(struct Renderer *);
+typedef void (*RendererDump)(struct Renderer *);
 typedef struct Renderer {
     RendererState runningState;
 
@@ -53,8 +54,9 @@ typedef struct Renderer {
     RendererProcessEvent processEvent;
     RendererDestroy destroy;
 
-    RendererDrawRect drawRect;
+    RendererDump dump;
 
+    RendererDrawRect drawRect;
 } Renderer;
 
 Renderer *render_create();

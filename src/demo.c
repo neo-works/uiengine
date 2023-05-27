@@ -35,7 +35,11 @@ int main(int argc, char* argv[]) {
     renderer->registerBackend(renderer, sdl2);
 
     RenderNode *rootNode = document->buildRenderTree(document);
+
     renderer->setRootRenderNode(renderer, rootNode);
+
+    renderer->dump(renderer);
+
     renderer->init(renderer);
 
     while (renderer->runningState != RENDERER_STATE_STOP) {

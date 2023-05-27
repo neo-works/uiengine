@@ -47,6 +47,7 @@ int main(int argc, char* argv[]) {
 
     while (renderer->runningState != RENDERER_STATE_STOP) {
         renderer->processEvent(renderer);
+        //document->updateRender(document);
         renderer->render(renderer);
     }
     renderer->destroy(renderer);

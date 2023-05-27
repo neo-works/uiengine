@@ -154,6 +154,8 @@ RenderNode *document_build_render_element(HtmlElement *element) {
             }
         }
 
+        elem->renderNode = renderNode;
+        elem->needRebuild = false;
         renderNode->children = document_build_render_element(elem->dom.childrens);
 
         if (!first) {
@@ -377,6 +379,8 @@ char *document_parse_element(HtmlElement *element, char *doc) {
         children->dom.attributes = NULL;
         children->dom.childrens = NULL;
         children->parent = NULL;
+        children->renderNode = NULL;
+        children->needRebuild = true;
         doc = document_parse_childrens(children, doc);
         element->dom.childrens = children;
     }
@@ -397,6 +401,8 @@ void document_parse(HtmlDocument *document, char *doc) {
     element->dom.attributes = NULL;
     element->dom.childrens = NULL;
     element->parent = NULL;
+    element->renderNode = NULL;
+    element->needRebuild = true;
     document_parse_element(element, doc);
     document->body = element;
 }

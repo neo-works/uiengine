@@ -50,6 +50,8 @@ typedef struct HtmlContentElement {
 typedef struct HtmlElement {
     HtmlElementType type;
     struct HtmlElement *parent;
+    struct RenderNode *renderNode;
+    bool needRebuild;
     DListNode node;
     union {
         HtmlDomElement dom;

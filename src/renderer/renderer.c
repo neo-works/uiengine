@@ -30,7 +30,6 @@ void renderer_default_init(struct Renderer *renderer) {
         printf("render should register a backend first!\n");
         return;
     }
-    printf("renderer: init\n");
     renderer->renderBackend->init(renderer->renderBackend);
     renderer->runningState = RENDERER_STATE_RUNNING;
 }
@@ -40,15 +39,16 @@ void renderer_default_process_event(Renderer *renderer) {
         printf("render should register a backend first!\n");
         return;
     }
+    Event e = renderer->renderBackend->polling(renderer->renderBackend);
+    if (e.type == EVENT_EXIT) {
+        renderer->runningState = RENDERER_STATE_STOP;
+    }
 }
 
 void renderer_default_destroy(Renderer *renderer) {
     if (renderer->renderBackend == NULL) {
         printf("render should register a backend first!\n");
         return;
-    }
-    if (renderer->renderBackend->polling(renderer->renderBackend)) {
-        renderer->runningState = RENDERER_STATE_STOP;
     }
 }
 
@@ -60,7 +60,6 @@ Renderer *render_create() {
     renderer->processEvent = renderer_default_process_event;
     renderer->setRootRenderNode = renderer_default_set_root_render_node;
     renderer->destroy = renderer_default_destroy;
-
 
     renderer->drawRect = renderer_default_draw_rect;
     return renderer;

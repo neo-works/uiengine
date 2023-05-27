@@ -1,7 +1,10 @@
 #include "../../include/renderer/render_node.h"
 
 void render_child(RenderNode *renderNode, Renderer *renderer) {
-     if (renderNode->children != NULL) {
+    if (renderNode == NULL) {
+        return;
+    }
+    if (renderNode->children != NULL) {
         DListNode *node = &renderNode->children->node;
         while (node != NULL) {
             RenderNode *child = ContainerOf(node, RenderNode, node);

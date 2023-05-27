@@ -30,23 +30,11 @@ int main(int argc, char* argv[]) {
     document->dump(document);
     printf("\nMem Usage: %d bytes\n", mem_get_usage());
 
-    RenderNode *rootNode = (RenderNode*)mem_alloc(sizeof(RenderNode));
-
-    Button *button = button_create();
-    button->renderNode.pos.x = 10;
-    button->renderNode.pos.y = 10;
-    button->renderNode.size.width = 20;
-    button->renderNode.size.height = 10;
-    button->renderNode.backgroundColor.r = 255;
-    button->renderNode.backgroundColor.g = 0;
-    button->renderNode.backgroundColor.b = 0;
-    button->renderNode.backgroundColor.a = 0;
-
-    rootNode->children = &button->renderNode;
-
     Renderer *renderer = render_create();
     RenderBackend* sdl2 = backend_sdl2_create();
     renderer->registerBackend(renderer, sdl2);
+
+    RenderNode *rootNode = document->buildRenderTree(document);
     renderer->setRootRenderNode(renderer, rootNode);
     renderer->init(renderer);
 

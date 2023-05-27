@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include "../dlist.h"
 #include "../trie_tree.h"
+#include "../../include/renderer/render_node.h"
 
 typedef unsigned char bool;
 #define true 1
@@ -59,7 +60,7 @@ typedef struct HtmlElement {
 typedef struct HtmlElement* (*HtmlDocumentGetElementById)(struct HtmlDocument *, char *);
 typedef struct HtmlElement* (*HtmlDocumentGetElementByName)(struct HtmlDocument *, char *);
 typedef void (*HtmlDocumentDump)(struct HtmlDocument *);
-
+typedef RenderNode *(*HtmlDocumentBuildRenderTree)(struct HtmlDocument *);
 typedef struct HtmlDocument {
     HtmlElement *body;
 
@@ -68,6 +69,8 @@ typedef struct HtmlDocument {
 
     HtmlDocumentGetElementById get_element_by_id;
     HtmlDocumentGetElementByName get_element_by_name;
+
+    HtmlDocumentBuildRenderTree buildRenderTree;
 
     HtmlDocumentDump dump;
 } HtmlDocument;

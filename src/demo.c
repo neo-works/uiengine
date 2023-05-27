@@ -9,22 +9,24 @@
 
 int main(int argc, char* argv[]) {
     char *doc = "<body id=\"test_id\">"
-                    "<div width=\"100\" height=\"60\" x=\"10\" y=\"10\" background=\"rgb(10,20,30)\">text</div>"
-                    "<div width=\"100\" height=\"60\" x=\"120\" y=\"10\" background=\"rgb(10,20,30)\">text</div>"
-                    "<div width=\"100\" height=\"60\" x=\"230\" y=\"10\" background=\"rgb(10,20,30)\">text</div>"
-                    "<div width=\"100\" height=\"60\" x=\"340\" y=\"10\" background=\"rgb(10,20,30)\">text</div>"
-                    "<div width=\"100\" height=\"60\" x=\"450\" y=\"10\" background=\"rgb(10,20,30)\">text</div>"
+                    "<button width=\"100\" height=\"60\" x=\"10\" y=\"10\" background=\"rgb(10,20,30)\">text</button>"
+                    "<button width=\"100\" height=\"60\" x=\"120\" y=\"10\" background=\"rgb(10,20,30)\">text</button>"
+                    "<button width=\"100\" height=\"60\" x=\"230\" y=\"10\" background=\"rgb(10,20,30)\">text</button>"
+                    "<button width=\"100\" height=\"60\" x=\"340\" y=\"10\" background=\"rgb(10,20,30)\">text</button>"
+                    "<button width=\"100\" height=\"60\" x=\"450\" y=\"10\" background=\"rgb(10,20,30)\">text</button>"
 
-                    "<div width=\"100\" height=\"60\" x=\"10\" y=\"100\" background=\"rgb(10,20,30)\">text</div>"
-                    "<div width=\"100\" height=\"60\" x=\"120\" y=\"100\" background=\"rgb(10,20,30)\">text</div>"
-                    "<div width=\"100\" height=\"60\" x=\"230\" y=\"100\" background=\"rgb(10,20,30)\">text</div>"
-                    "<div width=\"100\" height=\"60\" x=\"340\" y=\"100\" background=\"rgb(10,20,30)\">text</div>"
-                    "<div width=\"100\" height=\"60\" x=\"450\" y=\"100\" background=\"rgb(10,20,30)\">text</div>"
+                    "<button width=\"100\" height=\"60\" x=\"10\" y=\"100\" background=\"rgb(10,20,30)\">text</button>"
+                    "<button width=\"100\" height=\"60\" x=\"120\" y=\"100\" background=\"rgb(10,20,30)\">text</button>"
+                    "<button width=\"100\" height=\"60\" x=\"230\" y=\"100\" background=\"rgb(10,20,30)\">text</button>"
+                    "<button width=\"100\" height=\"60\" x=\"340\" y=\"100\" background=\"rgb(10,20,30)\">text</button>"
+                    "<button width=\"100\" height=\"60\" x=\"450\" y=\"100\" background=\"rgb(10,20,30)\">text</button>"
 
-                    "<div width=\"100\" height=\"60\" x=\"10\" y=\"200\" background=\"rgb(10,20,30)\">text</div>"
-                    "<div width=\"100\" height=\"60\" x=\"120\" y=\"200\" background=\"rgb(10,20,30)\">text</div>"
-                    "<div width=\"100\" height=\"60\" x=\"230\" y=\"200\" background=\"rgb(10,20,30)\">text</div>"
-                    "<div width=\"100\" height=\"60\" x=\"340\" y=\"200\" background=\"rgb(10,20,30)\">text</div>"
+                    "<button width=\"100\" height=\"60\" x=\"10\" y=\"200\" background=\"rgb(10,20,30)\">text</button>"
+                    "<button width=\"100\" height=\"60\" x=\"120\" y=\"200\" background=\"rgb(10,20,30)\">text</button>"
+                    "<button width=\"100\" height=\"60\" x=\"230\" y=\"200\" background=\"rgb(10,20,30)\">text</button>"
+                    "<button width=\"100\" height=\"60\" x=\"340\" y=\"200\" background=\"rgb(10,20,30)\">text</button>"
+                    "<button width=\"100\" height=\"60\" x=\"450\" y=\"200\" background=\"rgb(10,20,30)\">text</button>"
+
                     "<div width=\"100\" height=\"60\" x=\"450\" y=\"200\" background=\"rgb(10,20,30)\">text</div>"
                 "</body>";
     HtmlDocument* document = document_load(doc);

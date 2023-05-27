@@ -18,7 +18,6 @@ void sdl2_backend_default_draw_rect(RenderBackend *sdl2, Position pos, Size size
 }
 
 void sdl2_backend_default_init(struct RenderBackend *sdl2) {
-    printf("sdl2: init\n");
     if (SDL_Init(SDL_INIT_VIDEO) < 0 ) {
         printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
         return;
@@ -33,6 +32,7 @@ void sdl2_backend_default_init(struct RenderBackend *sdl2) {
         printf("Renderer could not be created! SDL_Error: %s\n", SDL_GetError());
         return;
     }
+    SDL_RenderSetVSync(sdlRenderer, -1);
 
     return;
 }
@@ -42,17 +42,19 @@ void sdl2_backend_default_submit(RenderBackend *sdl2) {
 }
 
 void sdl2_backend_default_clear(RenderBackend *sdl2) {
+    SDL_SetRenderDrawColor(sdlRenderer, 0, 0, 0, 0);
     SDL_RenderClear(sdlRenderer);
 }
 
-int sdl2_backend_default_polling(RenderBackend *sdl2) {
+Event sdl2_backend_default_polling(RenderBackend *sdl2) {
     SDL_Event e;
-    while (SDL_PollEvent(&e)) {
-        if (e.type == SDL_QUIT) {
-            return 1; 
-        }
+    Event retE;
+    retE.type = NO_EVENT;
+    SDL_PollEvent(&e);
+    if (e.type == SDL_QUIT) {
+        retE.type = EVENT_EXIT;
     }
-    return 0;
+    return retE;
 }
 
 RenderBackend *backend_sdl2_create() {

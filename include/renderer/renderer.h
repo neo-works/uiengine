@@ -11,11 +11,20 @@ typedef enum RendererState {
     RENDERER_STATE_STOP,
 } RendererState;
 
+typedef enum EventType {
+    NO_EVENT,
+    EVENT_EXIT,
+} EventType;
+
+typedef struct Event {
+    EventType type;
+} Event;
+
 typedef void (*RenderBackendDrawRect)(struct RenderBackend *, Position, Size, Color);
 typedef void (*RenderBackendInit)(struct RenderBackend *);
 typedef void (*RenderBackendSubmit)(struct RenderBackend *);
 typedef void (*RenderBackendClear)(struct RenderBackend *);
-typedef int (*RenderBackendPolling)(struct RenderBackend *);
+typedef Event (*RenderBackendPolling)(struct RenderBackend *);
 typedef struct RenderBackend {
     RenderBackendInit init;
     RenderBackendSubmit submit;

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include "include/mem/mem.h"
 #include "include/web/html_document.h"
@@ -21,7 +22,7 @@ int main(int argc, char* argv[]) {
                             "<li>·li 2</li>"
                             "<li>·li 3</li>"
                         "</ul>"
-                        "ttt"
+                        "{{ EXPR }}"
                         "<a href=\"www.baidu.com\">go</a>"
                     "</div>"
                 "</body>";
@@ -34,8 +35,8 @@ int main(int argc, char* argv[]) {
     Button *button = button_create();
     button->renderNode.pos.x = 10;
     button->renderNode.pos.y = 10;
-    button->renderNode.size.width = 200;
-    button->renderNode.size.height = 100;
+    button->renderNode.size.width = 20;
+    button->renderNode.size.height = 10;
     button->renderNode.backgroundColor.r = 255;
     button->renderNode.backgroundColor.g = 0;
     button->renderNode.backgroundColor.b = 0;
@@ -49,12 +50,11 @@ int main(int argc, char* argv[]) {
     renderer->setRootRenderNode(renderer, rootNode);
     renderer->init(renderer);
 
-    renderer->processEvent(renderer);
-    renderer->render(renderer);
-
     while (renderer->runningState != RENDERER_STATE_STOP) {
-        renderer->destroy(renderer);
+        renderer->processEvent(renderer);
+        renderer->render(renderer);
     }
+    renderer->destroy(renderer);
 
     return 0;
 }

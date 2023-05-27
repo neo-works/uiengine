@@ -98,15 +98,41 @@ RenderNode *document_build_render_element(HtmlElement *element) {
             INIT_DNODE(renderNode->node);
         }
 
-        renderNode->size.width = 100;
-        renderNode->size.height = 200;
-        renderNode->pos.x = 10;
-        renderNode->pos.y = 10;
+        renderNode->size.width = 0;
+        renderNode->size.height = 0;
+        renderNode->pos.x = 0;
+        renderNode->pos.y = 0;
 
-        renderNode->backgroundColor.r = 255;
+        renderNode->backgroundColor.r = 0;
         renderNode->backgroundColor.g = 0;
-        renderNode->backgroundColor.b = 255;
+        renderNode->backgroundColor.b = 0;
         renderNode->backgroundColor.a = 0;
+
+        if (elem->type == HTML_ELEMENT_TYPE_DOM) {
+            HtmlAttribute *attr = elem->dom.attributes;
+            if (attr != NULL) {
+                DListNode *attrNode = &attr->node;
+                while (attrNode != NULL) {
+                    HtmlAttribute *attribute = ContainerOf(attrNode, HtmlAttribute, node);
+                    if (strcmp(attribute->key, "width") == 0) {
+                        renderNode->size.width = atoi(attribute->val);
+                    }
+                    if (strcmp(attribute->key, "height") == 0) {
+                        renderNode->size.height = atoi(attribute->val);
+                    }
+                    if (strcmp(attribute->key, "x") == 0) {
+                        renderNode->pos.x = atoi(attribute->val);
+                    }
+                    if (strcmp(attribute->key, "y") == 0) {
+                        renderNode->pos.y = atoi(attribute->val);
+                    }
+                    if (strcmp(attribute->key, "background") == 0) {
+                        renderNode->backgroundColor.r = 255;
+                    }
+                    attrNode = attrNode->right;
+                }
+            }
+        }
 
         renderNode->children = document_build_render_element(elem->dom.childrens);
 

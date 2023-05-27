@@ -77,15 +77,37 @@ void document_default_dump(struct HtmlDocument *doc) {
     document_dump_element(-1, "", doc->body);
 }
 
+static RenderNode *document_create_render_component(HtmlElement *element) {
+    RenderNode *renderNode = NULL;
+    if (element->type == HTML_ELEMENT_TYPE_DOM) {
+        if (strcmp(element->dom.tag, "button") == 0) {
+            Button *button = button_create();
+            renderNode = &button->renderNode;
+        } else if (strcmp(element->dom.tag, "body") == 0) {
+            Button *button = button_create();
+            renderNode = &button->renderNode;
+        } else {
+            // FIXME: there is no component for tag
+            printf("No component mapping found for tag:'%s'\n", element->dom.tag);
+            return NULL;
+        }
+    } else {
+        // FIXME: here should creat text component
+        Button *button = button_create();
+        renderNode = &button->renderNode;
+    }
+    INIT_DNODE(renderNode->node);
+    return renderNode;
+}
+
 RenderNode *document_build_render_element(HtmlElement *element) {
     if (element == NULL) {
         return NULL;
     }
-
-    Button *button = button_create();
-    RenderNode *renderNode = &button->renderNode;
-    INIT_DNODE(renderNode->node);
-
+    RenderNode *renderNode = document_create_render_component(element);
+    if (renderNode == NULL) {
+        return NULL;
+    }
     RenderNode *head = renderNode;
 
     bool first = true;
@@ -93,9 +115,7 @@ RenderNode *document_build_render_element(HtmlElement *element) {
     while (node != NULL) {
         HtmlElement *elem = ContainerOf(node, HtmlElement, node);
         if (!first) {
-            Button *button = button_create();
-            renderNode = &button->renderNode;
-            INIT_DNODE(renderNode->node);
+            renderNode = document_create_render_component(element);
         }
 
         renderNode->size.width = 0;

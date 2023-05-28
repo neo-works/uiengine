@@ -59,16 +59,25 @@ typedef struct HtmlElement {
     };
 } HtmlElement;
 
+typedef struct HtmlDomFunc {
+    char *name;
+    void (*func)(struct HtmlElement *);
+    DListNode node;
+} HtmlDomFunc;
+
 typedef struct HtmlElement* (*HtmlDocumentGetElementById)(struct HtmlDocument *, char *);
 typedef struct HtmlElement* (*HtmlDocumentGetElementByName)(struct HtmlDocument *, char *);
 typedef void (*HtmlDocumentDump)(struct HtmlDocument *);
-typedef RenderNode *(*HtmlDocumentBuildRenderTree)(struct HtmlDocument *);
-typedef RenderNode *(*HtmlDocumentUpdateRender)(struct HtmlDocument *);
+typedef struct RenderNode *(*HtmlDocumentBuildRenderTree)(struct HtmlDocument *);
+typedef struct RenderNode *(*HtmlDocumentUpdateRender)(struct HtmlDocument *);
+typedef void (*HtmlDocumentRegisterDomFunc)(struct HtmlDocument *, char *, void(*)(struct HtmlDocument*));
 typedef struct HtmlDocument {
     HtmlElement *body;
 
     TrieTreeNode *idTree;
     TrieTreeNode *nameTree;
+
+    HtmlDomFunc *domFuncs;
 
     HtmlDocumentGetElementById get_element_by_id;
     HtmlDocumentGetElementByName get_element_by_name;
@@ -76,6 +85,7 @@ typedef struct HtmlDocument {
     HtmlDocumentBuildRenderTree buildRenderTree;
     HtmlDocumentUpdateRender updateRender;
 
+    HtmlDocumentRegisterDomFunc registerDomFunc;
     HtmlDocumentDump dump;
 } HtmlDocument;
 

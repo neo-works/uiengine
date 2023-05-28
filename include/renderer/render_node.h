@@ -5,10 +5,12 @@
 #include "../dlist.h"
 #include "type.h"
 #include "renderer.h"
+#include "../web/html_document.h"
 
 typedef void (*RenderNodeRender)(struct RenderNode *, struct Renderer *);
 
-typedef void (*RenderNodeOnCLick)(struct RenderNode *, Event e);
+typedef void (*RenderNodeOnClick)(struct RenderNode *, Event e);
+typedef void (*RenderNodeOnCustomClick)(struct RenderNode *, struct HtmlElement *elem);
 typedef void (*RenderNodeOnMouseEnter)(struct RenderNode *, Event e);
 typedef void (*RenderNodeOnMouseLeave)(struct RenderNode *, Event e);
 
@@ -22,11 +24,14 @@ typedef struct RenderNode {
 
     struct RenderNode *children;
     DListNode node;
-    RenderNodeOnCLick onClick;
+    RenderNodeOnClick onClick;
+    RenderNodeOnCustomClick onCustomClick;
     RenderNodeOnMouseEnter onMouseEnter;
     RenderNodeOnMouseLeave onMouseLeave;
 
     RenderNodeRender render;
+    
+    struct HtmlElement *dom;
 
     bool mouseIn;
 } RenderNode;

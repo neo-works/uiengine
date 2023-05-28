@@ -180,10 +180,30 @@ static RenderNode *document_create_render_component(HtmlElement *element) {
         renderNode = &button->renderNode;
     }
     INIT_DNODE(renderNode->node);
+    renderNode->dom = NULL;
     return renderNode;
 }
 
-void documen_set_render_node_attribute(RenderNode *renderNode, HtmlAttribute *attributes) {
+HtmlDomFunc *document_find_dom_func_by_name(HtmlDocument *document, char *name) {
+    if (name == NULL) {
+        return NULL;
+    }
+    if (document->domFuncs == NULL) {
+        return NULL;
+    }
+    DListNode *node = &document->domFuncs->node;
+    while (node != NULL) {
+        HtmlDomFunc *func = ContainerOf(node, HtmlDomFunc, node);
+        if (strcmp(func->name, name) == 0) {
+            return func;
+        }
+        node = node->right;
+    }
+    return NULL;
+}
+
+// TODO: need rafactor by mapping
+void documen_set_render_node_attribute(struct HtmlDocument *document, RenderNode *renderNode, HtmlAttribute *attributes) {
     HtmlAttribute *attr = attributes;
     if (attr != NULL) {
         DListNode *attrNode = &attr->node;
@@ -224,12 +244,16 @@ void documen_set_render_node_attribute(RenderNode *renderNode, HtmlAttribute *at
                 renderNode->backgroundColor.g = atoi(g);
                 renderNode->backgroundColor.b = atoi(b);
             }
+            if (strcmp(attribute->key, "onclick") == 0) {
+                HtmlDomFunc *func = document_find_dom_func_by_name(document, attribute->val);
+                renderNode->onCustomClick = func->func;
+            }
             attrNode = attrNode->right;
         }
     }
 }
 
-RenderNode *document_build_render_element(HtmlElement *element) {
+RenderNode *document_build_render_element(struct HtmlDocument *document, HtmlElement *element) {
     if (element == NULL) {
         return NULL;
     }
@@ -258,12 +282,13 @@ RenderNode *document_build_render_element(HtmlElement *element) {
         renderNode->backgroundColor.a = 0;
 
         if (elem->type == HTML_ELEMENT_TYPE_DOM) {
-            documen_set_render_node_attribute(renderNode, elem->dom.attributes);
+            documen_set_render_node_attribute(document, renderNode, elem->dom.attributes);
         }
 
+        renderNode->dom = elem;
         elem->renderNode = renderNode;
         elem->needRebuild = false;
-        renderNode->children = document_build_render_element(elem->dom.childrens);
+        renderNode->children = document_build_render_element(document, elem->dom.childrens);
 
         if (!first) {
             dlist_insert(&head->node, &renderNode->node);
@@ -278,7 +303,8 @@ RenderNode *document_build_render_element(HtmlElement *element) {
 RenderNode *document_default_build_render_tree(struct HtmlDocument *document) {
     RenderNode *rootNode = (RenderNode *)mem_alloc(sizeof(RenderNode));
     INIT_DNODE(rootNode->node);
-    rootNode->children = document_build_render_element(document->body);
+    rootNode->dom = document->body;
+    rootNode->children = document_build_render_element(document, document->body);
     return rootNode;
 }
 
@@ -308,12 +334,29 @@ RenderNode *document_default_update_render(struct HtmlDocument *document) {
     return document_update_render_element(document->body);
 }
 
+void document_default_register_dom_func(struct HtmlDocument *document, char *name, void(*func)(HtmlDocument*)) {
+    //FIXME: rb tree is better
+    HtmlDomFunc *domFunc = (HtmlDomFunc *)mem_alloc(sizeof(HtmlDomFunc));
+    domFunc->name = name;
+    domFunc->func = func;
+    INIT_DNODE(domFunc->node);
+
+    if (document->domFuncs == NULL) {
+        document->domFuncs = domFunc;
+        return;
+    }
+
+    dlist_insert(&document->domFuncs->node, &domFunc->node);
+}
+
 void document_init(HtmlDocument *document) {
+    document->domFuncs = NULL;
     document->get_element_by_id = document_default_get_element_by_id;
     document->get_element_by_name = document_default_get_element_by_name;
     document->dump = document_default_dump;
     document->buildRenderTree = document_default_build_render_tree;
     document->updateRender = document_default_update_render;
+    document->registerDomFunc = document_default_register_dom_func;
 }
 
 char *document_parse_content(HtmlElement *content, char *doc) {

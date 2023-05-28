@@ -168,18 +168,45 @@ RenderNode *document_build_render_element(HtmlElement *element) {
     return head;
 }
 
-RenderNode *document_build_render_tree(struct HtmlDocument *document) {
+RenderNode *document_default_build_render_tree(struct HtmlDocument *document) {
     RenderNode *rootNode = (RenderNode *)mem_alloc(sizeof(RenderNode));
     INIT_DNODE(rootNode->node);
     rootNode->children = document_build_render_element(document->body);
     return rootNode;
 }
 
+RenderNode *document_update_render_element(HtmlElement *element) {
+    if (element == NULL) {
+        return NULL;
+    }
+
+    DListNode *node = &element->node;
+    while (node != NULL) {
+        HtmlElement *elem = ContainerOf(node, HtmlElement, node);
+        if (elem->needRebuild) {
+            // FIXME: update render node by attributes
+            elem->renderNode->backgroundColor.r = 0;
+            elem->renderNode->backgroundColor.g = 255;
+            elem->needRebuild = false;
+        }
+        if (elem->type == HTML_ELEMENT_TYPE_DOM) {
+            document_update_render_element(elem->dom.childrens);
+        }
+        node = node->right;
+    }
+    return element->renderNode;
+}
+
+RenderNode *document_default_update_render(struct HtmlDocument *document) {
+    return document_update_render_element(document->body);
+}
+
 void document_init(HtmlDocument *document) {
     document->get_element_by_id = document_default_get_element_by_id;
     document->get_element_by_name = document_default_get_element_by_name;
     document->dump = document_default_dump;
-    document->buildRenderTree = document_build_render_tree;
+    document->buildRenderTree = document_default_build_render_tree;
+    document->updateRender = document_default_update_render;
 }
 
 static inline iswhitespace(char c) {

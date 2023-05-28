@@ -49,10 +49,33 @@ void sdl2_backend_default_clear(RenderBackend *sdl2) {
 Event sdl2_backend_default_polling(RenderBackend *sdl2) {
     SDL_Event e;
     Event retE;
-    retE.type = NO_EVENT;
     SDL_PollEvent(&e);
     if (e.type == SDL_QUIT) {
         retE.type = EVENT_EXIT;
+    } else if (e.type == SDL_MOUSEMOTION) {
+        retE.type = EVENT_MOUSE_MOTION;
+        retE.mouseMove.x = e.motion.x;
+        retE.mouseMove.y = e.motion.y;
+    } else if (e.type == SDL_MOUSEBUTTONUP) {
+        if (e.button.button == 1) {
+            retE.type = EVENT_MOUSE_LEFT_UP;
+        }
+        retE.leftMouseUp.x = e.button.x;
+        retE.leftMouseUp.y = e.button.y;
+    } else if (e.type == SDL_MOUSEBUTTONDOWN) {
+        if (e.button.button == 1) {
+            retE.type = EVENT_MOUSE_LEFT_DOWN;
+        }
+        retE.leftMouseUp.x = e.button.x;
+        retE.leftMouseUp.y = e.button.y;
+    } else if (e.type == SDL_KEYDOWN) {
+        retE.type = EVENT_KEY_DOWN;
+        retE.keyboardDown.key = e.key.keysym.sym;
+    } else if (e.type == SDL_KEYUP) {
+        retE.type = EVENT_KEY_UP;
+        retE.keyboardUp.key = e.key.keysym.sym;
+    } else {
+        retE.type = EVENT_UNKNOWN;
     }
     return retE;
 }

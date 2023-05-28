@@ -63,6 +63,7 @@ typedef struct HtmlElement* (*HtmlDocumentGetElementById)(struct HtmlDocument *,
 typedef struct HtmlElement* (*HtmlDocumentGetElementByName)(struct HtmlDocument *, char *);
 typedef void (*HtmlDocumentDump)(struct HtmlDocument *);
 typedef RenderNode *(*HtmlDocumentBuildRenderTree)(struct HtmlDocument *);
+typedef RenderNode *(*HtmlDocumentUpdateRender)(struct HtmlDocument *);
 typedef struct HtmlDocument {
     HtmlElement *body;
 
@@ -73,6 +74,7 @@ typedef struct HtmlDocument {
     HtmlDocumentGetElementByName get_element_by_name;
 
     HtmlDocumentBuildRenderTree buildRenderTree;
+    HtmlDocumentUpdateRender updateRender;
 
     HtmlDocumentDump dump;
 } HtmlDocument;

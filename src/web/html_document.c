@@ -6,6 +6,89 @@
 
 const char *ElementTypeName[HTML_ELEMENT_TYPE_MAX] = {"dom", "text"};
 
+static inline iswhitespace(char c) {
+    return (c == ' ') || (c == '\t');
+}
+
+static inline isalpha(char c) {
+    return ((c >= 'a') && (c <= 'z')) || 
+           ((c >= 'A') && (c <= 'Z'));
+}
+
+static inline isnumeric(char c) {
+    return ((c >= '0') && (c <= '9'));
+}
+
+char* document_consume_whitespace(char *doc) {
+    while (iswhitespace(*doc)) {
+        doc++;
+    }
+    return doc;
+}
+
+char* document_match_bound(char *doc) {
+    if (*doc == '\"') {
+        return "\"";
+    } else if (*doc == '\'') {
+        return "\'";
+    } else {
+        perror("syntax error: shoud have a bound\n");
+        exit(0);
+    }
+}
+
+int document_match_str(char *doc, char *str) {
+    char *tok_tmp = str;
+    while ((*doc != '\0') && (*tok_tmp != '\0')) {
+        if (*doc == *tok_tmp) {
+            doc++;
+            tok_tmp++;
+        } else {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+char *document_match_and_consume(char *doc, char *tok) {
+    char *tok_tmp = tok;
+    while ((*doc != '\0') && (*tok_tmp != '\0')) {
+        if (*doc == *tok_tmp) {
+            doc++;
+            tok_tmp++;
+        } else {
+            break;
+        }
+    }
+    return doc;
+}
+
+char *document_parse_str_until(char *doc, char *bound) {
+    char *str = mem_alloc(0x20);
+    memset(str, 0, 0x20);
+    uint32_t idx = 0;
+    while ((*doc != '\0') && (*doc != *bound)) {
+           str[idx++] = *doc;
+           doc++;
+    }
+    return str;
+}
+
+char *document_parse_tag(char *doc) {
+    char *tag = mem_alloc(0x20);
+    memset(tag, 0, 0x20);
+    uint32_t idx = 0;
+    while ((*doc != '\0')) {
+        if (isalpha(*doc) || isnumeric(*doc)) {
+            tag[idx++] = *doc;
+            doc++;
+        } else {
+            break;
+        }
+    }
+    return tag;
+}
+
 HtmlElement* document_default_get_element_by_name(struct HtmlDocument *doc, char *name) {
     return NULL;
 }
@@ -100,6 +183,52 @@ static RenderNode *document_create_render_component(HtmlElement *element) {
     return renderNode;
 }
 
+void documen_set_render_node_attribute(RenderNode *renderNode, HtmlAttribute *attributes) {
+    HtmlAttribute *attr = attributes;
+    if (attr != NULL) {
+        DListNode *attrNode = &attr->node;
+        while (attrNode != NULL) {
+            HtmlAttribute *attribute = ContainerOf(attrNode, HtmlAttribute, node);
+            if (strcmp(attribute->key, "width") == 0) {
+                renderNode->size.width = atoi(attribute->val);
+            }
+            if (strcmp(attribute->key, "height") == 0) {
+                renderNode->size.height = atoi(attribute->val);
+            }
+            if (strcmp(attribute->key, "x") == 0) {
+                renderNode->pos.x = atoi(attribute->val);
+            }
+            if (strcmp(attribute->key, "y") == 0) {
+                renderNode->pos.y = atoi(attribute->val);
+            }
+            if (strcmp(attribute->key, "background") == 0) {
+                char *colorStr = attribute->val;
+                colorStr = document_match_and_consume(colorStr, "rgb(");
+
+                char *r = document_parse_str_until(colorStr, ",");
+                colorStr = document_match_and_consume(colorStr, r);
+                colorStr = document_match_and_consume(colorStr, ",");
+                colorStr = document_consume_whitespace(colorStr);
+
+                char *g = document_parse_str_until(colorStr, ",");
+                colorStr = document_match_and_consume(colorStr, g);
+                colorStr = document_match_and_consume(colorStr, ",");
+                colorStr = document_consume_whitespace(colorStr);
+
+                char *b = document_parse_str_until(colorStr, ")");
+                colorStr = document_match_and_consume(colorStr, b);
+                colorStr = document_match_and_consume(colorStr, ")");
+                colorStr = document_consume_whitespace(colorStr);
+
+                renderNode->backgroundColor.r = atoi(r);
+                renderNode->backgroundColor.g = atoi(g);
+                renderNode->backgroundColor.b = atoi(b);
+            }
+            attrNode = attrNode->right;
+        }
+    }
+}
+
 RenderNode *document_build_render_element(HtmlElement *element) {
     if (element == NULL) {
         return NULL;
@@ -129,29 +258,7 @@ RenderNode *document_build_render_element(HtmlElement *element) {
         renderNode->backgroundColor.a = 0;
 
         if (elem->type == HTML_ELEMENT_TYPE_DOM) {
-            HtmlAttribute *attr = elem->dom.attributes;
-            if (attr != NULL) {
-                DListNode *attrNode = &attr->node;
-                while (attrNode != NULL) {
-                    HtmlAttribute *attribute = ContainerOf(attrNode, HtmlAttribute, node);
-                    if (strcmp(attribute->key, "width") == 0) {
-                        renderNode->size.width = atoi(attribute->val);
-                    }
-                    if (strcmp(attribute->key, "height") == 0) {
-                        renderNode->size.height = atoi(attribute->val);
-                    }
-                    if (strcmp(attribute->key, "x") == 0) {
-                        renderNode->pos.x = atoi(attribute->val);
-                    }
-                    if (strcmp(attribute->key, "y") == 0) {
-                        renderNode->pos.y = atoi(attribute->val);
-                    }
-                    if (strcmp(attribute->key, "background") == 0) {
-                        renderNode->backgroundColor.r = 255;
-                    }
-                    attrNode = attrNode->right;
-                }
-            }
+            documen_set_render_node_attribute(renderNode, elem->dom.attributes);
         }
 
         elem->renderNode = renderNode;
@@ -207,89 +314,6 @@ void document_init(HtmlDocument *document) {
     document->dump = document_default_dump;
     document->buildRenderTree = document_default_build_render_tree;
     document->updateRender = document_default_update_render;
-}
-
-static inline iswhitespace(char c) {
-    return (c == ' ') || (c == '\t');
-}
-
-static inline isalpha(char c) {
-    return ((c >= 'a') && (c <= 'z')) || 
-           ((c >= 'A') && (c <= 'Z'));
-}
-
-static inline isnumeric(char c) {
-    return ((c >= '0') && (c <= '9'));
-}
-
-char* document_consume_whitespace(char *doc) {
-    while (iswhitespace(*doc)) {
-        doc++;
-    }
-    return doc;
-}
-
-char* document_match_bound(char *doc) {
-    if (*doc == '\"') {
-        return "\"";
-    } else if (*doc == '\'') {
-        return "\'";
-    } else {
-        perror("syntax error: shoud have a bound\n");
-        exit(0);
-    }
-}
-
-int document_match_str(char *doc, char *str) {
-    char *tok_tmp = str;
-    while ((*doc != '\0') && (*tok_tmp != '\0')) {
-        if (*doc == *tok_tmp) {
-            doc++;
-            tok_tmp++;
-        } else {
-            return 0;
-        }
-    }
-    return 1;
-}
-
-char *document_match_and_consume(char *doc, char *tok) {
-    char *tok_tmp = tok;
-    while ((*doc != '\0') && (*tok_tmp != '\0')) {
-        if (*doc == *tok_tmp) {
-            doc++;
-            tok_tmp++;
-        } else {
-            break;
-        }
-    }
-    return doc;
-}
-
-char *document_parse_str_until(char *doc, char *bound) {
-    char *str = mem_alloc(0x20);
-    memset(str, 0, 0x20);
-    uint32_t idx = 0;
-    while ((*doc != '\0') && (*doc != *bound)) {
-           str[idx++] = *doc;
-           doc++;
-    }
-    return str;
-}
-
-char *document_parse_tag(char *doc) {
-    char *tag = mem_alloc(0x20);
-    memset(tag, 0, 0x20);
-    uint32_t idx = 0;
-    while ((*doc != '\0')) {
-        if (isalpha(*doc) || isnumeric(*doc)) {
-            tag[idx++] = *doc;
-            doc++;
-        } else {
-            break;
-        }
-    }
-    return tag;
 }
 
 char *document_parse_content(HtmlElement *content, char *doc) {

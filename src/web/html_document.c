@@ -203,6 +203,9 @@ HtmlDomFunc *document_find_dom_func_by_name(HtmlDocument *document, char *name) 
 }
 
 // TODO: need rafactor by mapping
+//      void (*func)(HtmlAttribute*) = get_attribute_set_func(attribute->key);
+//      func(attribute);
+//
 void documen_set_render_node_attribute(struct HtmlDocument *document, RenderNode *renderNode, HtmlAttribute *attributes) {
     HtmlAttribute *attr = attributes;
     if (attr != NULL) {

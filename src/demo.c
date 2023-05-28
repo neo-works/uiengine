@@ -50,6 +50,7 @@ int main(int argc, char* argv[]) {
     document->dump(document);
     printf("\nMem Usage: %d bytes\n", mem_get_usage());
 
+    // Binding
     document->registerDomFunc(document, "button1_click", button1_click);
     document->registerDomFunc(document, "button2_click", button2_click);
     document->registerDomFunc(document, "button3_click", button3_click);

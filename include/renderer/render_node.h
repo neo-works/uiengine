@@ -6,7 +6,11 @@
 #include "type.h"
 #include "renderer.h"
 
-typedef void (*Render)(struct RenderNode *, struct Renderer *);
+typedef void (*RenderNodeRender)(struct RenderNode *, struct Renderer *);
+
+typedef void (*RenderNodeOnCLick)(struct RenderNode *, Event e);
+typedef void (*RenderNodeOnMouseEnter)(struct RenderNode *, Event e);
+typedef void (*RenderNodeOnMouseLeave)(struct RenderNode *, Event e);
 
 typedef struct RenderNode {
     Position pos;
@@ -18,8 +22,13 @@ typedef struct RenderNode {
 
     struct RenderNode *children;
     DListNode node;
+    RenderNodeOnCLick onClick;
+    RenderNodeOnMouseEnter onMouseEnter;
+    RenderNodeOnMouseLeave onMouseLeave;
 
-    Render render;
+    RenderNodeRender render;
+
+    bool mouseIn;
 } RenderNode;
 
 void render_child(RenderNode *renderNode, struct Renderer *renderer);

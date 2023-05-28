@@ -34,6 +34,49 @@ void renderer_default_init(struct Renderer *renderer) {
     renderer->runningState = RENDERER_STATE_RUNNING;
 }
 
+void renderer_teigger_mouse_event(RenderNode *renderNode, Event e) {
+    if (renderNode == NULL) {
+        return;
+    }
+
+    RenderNode *children = renderNode->children;
+    if (children == NULL) {
+        return;
+    }
+    DListNode *node = &children->node;
+    while (node != NULL) {
+        RenderNode *elem = ContainerOf(node, RenderNode, node);
+        renderer_teigger_mouse_event(elem, e);
+        node = node->right;
+    }
+
+    if (renderNode->onClick != NULL && e.type == EVENT_MOUSE_LEFT_UP) {
+        if ((e.leftMouseUp.x >= renderNode->pos.x && e.leftMouseUp.x <= (renderNode->pos.x + renderNode->size.width)) &&
+            (e.leftMouseUp.y >= renderNode->pos.y && e.leftMouseUp.y <= (renderNode->pos.y + renderNode->size.height))) {
+            renderNode->onClick(renderNode, e);
+        }
+    }
+
+    if ((renderNode->onMouseEnter != NULL || renderNode->onMouseLeave != NULL) && e.type == EVENT_MOUSE_MOTION) {
+        if ((e.mouseMove.x >= renderNode->pos.x && e.mouseMove.x <= (renderNode->pos.x + renderNode->size.width)) &&
+            (e.mouseMove.y >= renderNode->pos.y && e.mouseMove.y <= (renderNode->pos.y + renderNode->size.height))) {
+            if (!renderNode->mouseIn) {
+                if(renderNode->onMouseEnter) {
+                    renderNode->onMouseEnter(renderNode, e);
+                }
+                renderNode->mouseIn = true;
+            }
+        } else {
+            if (renderNode->mouseIn) {
+                if(renderNode->onMouseLeave) {
+                    renderNode->onMouseLeave(renderNode, e);
+                }
+                renderNode->mouseIn = false;
+            }
+        }
+    }
+}
+
 void renderer_default_process_event(Renderer *renderer) {
     if (renderer->renderBackend == NULL) {
         printf("render should register a backend first!\n");
@@ -42,6 +85,10 @@ void renderer_default_process_event(Renderer *renderer) {
     Event e = renderer->renderBackend->polling(renderer->renderBackend);
     if (e.type == EVENT_EXIT) {
         renderer->runningState = RENDERER_STATE_STOP;
+    } else if (e.type == EVENT_MOUSE_LEFT_UP || e.type == EVENT_MOUSE_MOTION) {
+        // Find Trigger RenderNode by ZIndex
+        // FIXME: ZIndex is better
+        renderer_teigger_mouse_event(renderer->rootNode, e);
     }
 }
 

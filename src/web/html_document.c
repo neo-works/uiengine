@@ -78,7 +78,7 @@ char *document_parse_tag(char *doc) {
     memset(tag, 0, 0x20);
     uint32_t idx = 0;
     while ((*doc != '\0')) {
-        if (isalpha(*doc) || isnumeric(*doc)) {
+        if (isalpha(*doc) || isnumeric(*doc) || *doc == '-') {
             tag[idx++] = *doc;
             doc++;
         } else {
@@ -201,6 +201,31 @@ HtmlDomFunc *document_find_dom_func_by_name(HtmlDocument *document, char *name) 
     return NULL;
 }
 
+static Color document_attribute_parse_rgb_color(char *colorStr) {
+    colorStr = document_match_and_consume(colorStr, "rgb(");
+
+    char *r = document_parse_str_until(colorStr, ",");
+    colorStr = document_match_and_consume(colorStr, r);
+    colorStr = document_match_and_consume(colorStr, ",");
+    colorStr = document_consume_whitespace(colorStr);
+
+    char *g = document_parse_str_until(colorStr, ",");
+    colorStr = document_match_and_consume(colorStr, g);
+    colorStr = document_match_and_consume(colorStr, ",");
+    colorStr = document_consume_whitespace(colorStr);
+
+    char *b = document_parse_str_until(colorStr, ")");
+    colorStr = document_match_and_consume(colorStr, b);
+    colorStr = document_match_and_consume(colorStr, ")");
+    colorStr = document_consume_whitespace(colorStr);
+
+    Color color;
+    color.r = atoi(r);
+    color.g = atoi(g);
+    color.b = atoi(b);
+    return color;
+}
+
 // TODO: need rafactor by mapping
 //      void (*func)(HtmlAttribute*) = get_attribute_set_func(attribute->key);
 //      func(attribute);
@@ -225,26 +250,17 @@ void documen_set_render_node_attribute(struct HtmlDocument *document, RenderNode
             }
             if (strcmp(attribute->key, "background") == 0) {
                 char *colorStr = attribute->val;
-                colorStr = document_match_and_consume(colorStr, "rgb(");
-
-                char *r = document_parse_str_until(colorStr, ",");
-                colorStr = document_match_and_consume(colorStr, r);
-                colorStr = document_match_and_consume(colorStr, ",");
-                colorStr = document_consume_whitespace(colorStr);
-
-                char *g = document_parse_str_until(colorStr, ",");
-                colorStr = document_match_and_consume(colorStr, g);
-                colorStr = document_match_and_consume(colorStr, ",");
-                colorStr = document_consume_whitespace(colorStr);
-
-                char *b = document_parse_str_until(colorStr, ")");
-                colorStr = document_match_and_consume(colorStr, b);
-                colorStr = document_match_and_consume(colorStr, ")");
-                colorStr = document_consume_whitespace(colorStr);
-
-                renderNode->backgroundColor.r = atoi(r);
-                renderNode->backgroundColor.g = atoi(g);
-                renderNode->backgroundColor.b = atoi(b);
+                Color color = document_attribute_parse_rgb_color(colorStr);
+                renderNode->backgroundColor.r = color.r;
+                renderNode->backgroundColor.g = color.g;
+                renderNode->backgroundColor.b = color.b;
+            }
+            if (strcmp(attribute->key, "border-color") == 0) {
+                char *colorStr = attribute->val;
+                Color color = document_attribute_parse_rgb_color(colorStr);
+                renderNode->borderColor.r = color.r;
+                renderNode->borderColor.g = color.g;
+                renderNode->borderColor.b = color.b;
             }
             if (strcmp(attribute->key, "onclick") == 0) {
                 HtmlDomFunc *func = document_find_dom_func_by_name(document, attribute->val);

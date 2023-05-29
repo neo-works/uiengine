@@ -9,6 +9,10 @@
 
 typedef void (*RenderNodeRender)(struct RenderNode *, struct Renderer *);
 
+typedef void (*RenderNodeOnMouseDown)(struct RenderNode *, Event e);
+typedef void (*RenderNodeOnCustomMouseDown)(struct RenderNode *, struct HtmlElement *elem);
+typedef void (*RenderNodeOnMouseUp)(struct RenderNode *, Event e);
+typedef void (*RenderNodeOnCustomMouseUp)(struct RenderNode *, struct HtmlElement *elem);
 typedef void (*RenderNodeOnClick)(struct RenderNode *, Event e);
 typedef void (*RenderNodeOnCustomClick)(struct RenderNode *, struct HtmlElement *elem);
 typedef void (*RenderNodeOnMouseEnter)(struct RenderNode *, Event e);
@@ -30,20 +34,22 @@ typedef struct RenderNode {
     struct RenderNode *children;
     DListNode node;
 
+    RenderNodeOnMouseDown onMouseDown;
+    RenderNodeOnCustomMouseDown onCustomMouseDown;
+    RenderNodeOnMouseUp onMouseUp;
+    RenderNodeOnCustomMouseUp onCustomMouseUp;
     RenderNodeOnClick onClick;
     RenderNodeOnCustomClick onCustomClick;
 
     RenderNodeOnMouseEnter onMouseEnter;
     RenderNodeOnCustomMouseEnter onCustomMouseEnter;
-    
+    RenderNodeOnMouseHover onMouseHover;
+    RenderNodeOnCustomMouseHover onCustomMouseHover;
     RenderNodeOnMouseLeave onMouseLeave;
     RenderNodeOnCustomMouseLeave onCustomMouseLeave;
 
-    RenderNodeOnMouseLeave onMouseHover;
-    RenderNodeOnCustomMouseHover onCustomMouseHover;
-
     RenderNodeRender render;
-    
+
     struct HtmlElement *dom;
 
     bool mouseIn;

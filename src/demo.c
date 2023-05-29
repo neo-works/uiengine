@@ -28,32 +28,43 @@ void button3_click(HtmlElement *elem) {
 int main(int argc, char* argv[]) {
     char *doc =
     "<body id=\"test_id\">"
-        "<button onclick=\"button1_click\" width=\"100\" height=\"60\" x=\"10\" y=\"10\" background=\"rgb(255,255,255)\">text</button>"
-        "<button onclick=\"button2_click\" width=\"100\" height=\"60\" x=\"120\" y=\"10\" background=\"rgb(255,255,255)\">text</button>"
-        "<button onclick=\"button3_click\" width=\"100\" height=\"60\" x=\"230\" y=\"10\" background=\"rgb(255,255,255)\">text</button>"
-        "<button width=\"100\" height=\"60\" x=\"340\" y=\"10\" background=\"rgb(255,255,255)\">text</button>"
-        "<button width=\"100\" height=\"60\" x=\"450\" y=\"10\" background=\"rgb(255,255,255)\">text</button>"
+        "<button onclick=\"button1_click\" width=\"400\" height=\"80\" x=\"0\" y=\"0\" background=\"rgb(50,45,41)\">text</button>"
 
-        "<button width=\"100\" height=\"60\" x=\"10\" y=\"100\" background=\"rgb(255,255,255)\">text</button>"
-        "<button width=\"100\" height=\"60\" x=\"120\" y=\"100\" background=\"rgb(255,255,255)\">text</button>"
-        "<button width=\"100\" height=\"60\" x=\"230\" y=\"100\" background=\"rgb(255,255,255)\">text</button>"
-        "<button width=\"100\" height=\"60\" x=\"340\" y=\"100\" background=\"rgb(255,255,255)\">text</button>"
-        "<button width=\"100\" height=\"60\" x=\"450\" y=\"100\" background=\"rgb(255,255,255)\">text</button>"
+        "<button onclick=\"button1_click\" width=\"100\" height=\"60\" x=\"0\" y=\"80\" background=\"rgb(67,62,59)\">text</button>"
+        "<button onclick=\"button2_click\" width=\"100\" height=\"60\" x=\"100\" y=\"80\" background=\"rgb(67,62,59)\">text</button>"
+        "<button onclick=\"button3_click\" width=\"100\" height=\"60\" x=\"200\" y=\"80\" background=\"rgb(67,62,59)\">text</button>"
+        "<button width=\"100\" height=\"60\" x=\"300\" y=\"80\" background=\"rgb(242,163,60)\">text</button>"
 
-        "<button width=\"100\" height=\"60\" x=\"10\" y=\"190\" background=\"rgb(255,255,255)\">text</button>"
-        "<button width=\"100\" height=\"60\" x=\"120\" y=\"190\" background=\"rgb(255,255,255)\">text</button>"
-        "<button width=\"100\" height=\"60\" x=\"230\" y=\"190\" background=\"rgb(255,255,255)\">text</button>"
-        "<button width=\"100\" height=\"60\" x=\"340\" y=\"190\" background=\"rgb(255,255,255)\">text</button>"
-        "<button width=\"100\" height=\"60\" x=\"450\" y=\"190\" background=\"rgb(255,255,255)\">text</button>"
+        "<button width=\"100\" height=\"60\" x=\"0\" y=\"140\" background=\"rgb(105,101,98)\">text</button>"
+        "<button width=\"100\" height=\"60\" x=\"100\" y=\"140\" background=\"rgb(105,101,98)\">text</button>"
+        "<button width=\"100\" height=\"60\" x=\"200\" y=\"140\" background=\"rgb(105,101,98)\">text</button>"
+        "<button width=\"100\" height=\"60\" x=\"300\" y=\"140\" background=\"rgb(242,163,60)\">text</button>"
+
+        "<button width=\"100\" height=\"60\" x=\"0\" y=\"200\" background=\"rgb(105,101,98)\">text</button>"
+        "<button width=\"100\" height=\"60\" x=\"100\" y=\"200\" background=\"rgb(105,101,98)\">text</button>"
+        "<button width=\"100\" height=\"60\" x=\"200\" y=\"200\" background=\"rgb(105,101,98)\">text</button>"
+        "<button width=\"100\" height=\"60\" x=\"300\" y=\"200\" background=\"rgb(242,163,60)\">text</button>"
+
+        "<button width=\"100\" height=\"60\" x=\"0\" y=\"260\" background=\"rgb(105,101,98)\">text</button>"
+        "<button width=\"100\" height=\"60\" x=\"100\" y=\"260\" background=\"rgb(105,101,98)\">text</button>"
+        "<button width=\"100\" height=\"60\" x=\"200\" y=\"260\" background=\"rgb(105,101,98)\">text</button>"
+        "<button width=\"100\" height=\"60\" x=\"300\" y=\"260\" background=\"rgb(242,163,60)\">text</button>"
+
+        "<button width=\"200\" height=\"60\" x=\"0\" y=\"320\" background=\"rgb(105,101,98)\">text</button>"
+        "<button width=\"100\" height=\"60\" x=\"200\" y=\"320\" background=\"rgb(105,101,98)\">text</button>"
+        "<button width=\"100\" height=\"60\" x=\"300\" y=\"320\" background=\"rgb(242,163,60)\">text</button>"
     "</body>";
     HtmlDocument* document = document_load(doc);
-    document->dump(document);
-    printf("\nMem Usage: %d bytes\n", mem_get_usage());
 
     // Binding
     document->registerDomFunc(document, "button1_click", button1_click);
     document->registerDomFunc(document, "button2_click", button2_click);
     document->registerDomFunc(document, "button3_click", button3_click);
+
+
+
+    document->dump(document);
+    printf("\nMem Usage: %d bytes\n", mem_get_usage());
 
     Renderer *renderer = render_create();
     RenderBackend* sdl2 = backend_sdl2_create();

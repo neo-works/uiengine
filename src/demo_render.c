@@ -22,9 +22,9 @@ static void test_node(Button *bro) {
         button->renderNode.pos.y = (rand() % 400) + 5;
         button->renderNode.size.width = (rand() % 60) + 5;
         button->renderNode.size.height = (rand() % 60) + 5;
-        button->renderNode.backgroundColor.r = rand() % 255;
-        button->renderNode.backgroundColor.g = rand() % 255;
-        button->renderNode.backgroundColor.b = rand() % 255;
+        button->renderNode.backgroundColor.r = (rand() % 200) + 20;
+        button->renderNode.backgroundColor.g = (rand() % 200) + 20;
+        button->renderNode.backgroundColor.b = (rand() % 200) + 20;
         button->renderNode.backgroundColor.a = 0;
         dlist_insert(&bro->renderNode.node, &button->renderNode.node);
 

@@ -3,13 +3,21 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
 
-#define SCREEN_WIDTH    640
-#define SCREEN_HEIGHT   480
+#define SCREEN_WIDTH    400
+#define SCREEN_HEIGHT   380
 
 SDL_Window* gWindow = NULL;
 SDL_Renderer *sdlRenderer = NULL;
 
-void sdl2_backend_default_draw_rect(RenderBackend *sdl2, Position pos, Size size, Color backgroundColor) {
+void sdl2_backend_default_draw_rect(RenderBackend *sdl2, Position pos, Size size, Color borderColor) {
+    SDL_SetRenderDrawColor(sdlRenderer, borderColor.r, borderColor.g, borderColor.b, borderColor.a);
+    SDL_Rect rect = {
+        pos.x, pos.y, size.width, size.height
+    };
+    SDL_RenderDrawRect(sdlRenderer, &rect);
+}
+
+void sdl2_backend_default_fill_rect(RenderBackend *sdl2, Position pos, Size size, Color backgroundColor) {
     SDL_SetRenderDrawColor(sdlRenderer, backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
     SDL_Rect rect = {
         pos.x, pos.y, size.width, size.height
@@ -22,7 +30,7 @@ void sdl2_backend_default_init(struct RenderBackend *sdl2) {
         printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
         return;
     }
-    gWindow = SDL_CreateWindow( "UI demo", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+    gWindow = SDL_CreateWindow( "计算器", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
     if (gWindow == NULL) {
         printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
         return;
@@ -83,6 +91,7 @@ Event sdl2_backend_default_polling(RenderBackend *sdl2) {
 RenderBackend *backend_sdl2_create() {
     RenderBackend *sdl2  = (RenderBackend *)mem_alloc(sizeof(RenderBackend));
     sdl2->drawRect = sdl2_backend_default_draw_rect;
+    sdl2->fillRect = sdl2_backend_default_fill_rect;
     sdl2->submit = sdl2_backend_default_submit;
     sdl2->clear = sdl2_backend_default_clear;
     sdl2->polling = sdl2_backend_default_polling;

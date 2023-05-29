@@ -12,7 +12,11 @@ typedef void (*RenderNodeRender)(struct RenderNode *, struct Renderer *);
 typedef void (*RenderNodeOnClick)(struct RenderNode *, Event e);
 typedef void (*RenderNodeOnCustomClick)(struct RenderNode *, struct HtmlElement *elem);
 typedef void (*RenderNodeOnMouseEnter)(struct RenderNode *, Event e);
+typedef void (*RenderNodeOnCustomMouseEnter)(struct RenderNode *, struct HtmlElement *elem);
 typedef void (*RenderNodeOnMouseLeave)(struct RenderNode *, Event e);
+typedef void (*RenderNodeOnCustomMouseLeave)(struct RenderNode *, struct HtmlElement *elem);
+typedef void (*RenderNodeOnMouseHover)(struct RenderNode *, Event e);
+typedef void (*RenderNodeOnCustomMouseHover)(struct RenderNode *, struct HtmlElement *elem);
 
 typedef struct RenderNode {
     Position pos;
@@ -21,13 +25,22 @@ typedef struct RenderNode {
     Margin margin;
     Color foregroundColor;
     Color backgroundColor;
+    Color borderColor;
 
     struct RenderNode *children;
     DListNode node;
+
     RenderNodeOnClick onClick;
     RenderNodeOnCustomClick onCustomClick;
+
     RenderNodeOnMouseEnter onMouseEnter;
+    RenderNodeOnCustomMouseEnter onCustomMouseEnter;
+    
     RenderNodeOnMouseLeave onMouseLeave;
+    RenderNodeOnCustomMouseLeave onCustomMouseLeave;
+
+    RenderNodeOnMouseLeave onMouseHover;
+    RenderNodeOnCustomMouseHover onCustomMouseHover;
 
     RenderNodeRender render;
     

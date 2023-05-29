@@ -7,6 +7,10 @@ void renderer_default_draw_rect(Renderer *renderer, Position pos, Size size, Col
     renderer->renderBackend->drawRect(renderer->renderBackend, pos, size, backgroundColor);
 }
 
+void renderer_default_fill_rect(Renderer *renderer, Position pos, Size size, Color backgroundColor) {
+    renderer->renderBackend->fillRect(renderer->renderBackend, pos, size, backgroundColor);
+}
+
 void renderer_default_register_backend(Renderer *renderer, RenderBackend *renderBackend) {
     renderer->renderBackend = renderBackend;
 }
@@ -147,5 +151,6 @@ Renderer *render_create() {
     renderer->dump = renderer_default_dump;
 
     renderer->drawRect = renderer_default_draw_rect;
+    renderer->fillRect = renderer_default_fill_rect;
     return renderer;
 }

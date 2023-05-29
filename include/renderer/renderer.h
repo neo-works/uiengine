@@ -22,6 +22,7 @@ typedef struct RenderBackend {
     RenderBackendClear clear;
     RenderBackendPolling polling;
     RenderBackendDrawRect drawRect;
+    RenderBackendDrawRect fillRect;
 } RenderBackend;
 
 typedef void (*RendererRegisterBackend)(struct Renderer *, RenderBackend *);
@@ -48,6 +49,7 @@ typedef struct Renderer {
     RendererDump dump;
 
     RendererDrawRect drawRect;
+    RendererDrawRect fillRect;
 } Renderer;
 
 Renderer *render_create();

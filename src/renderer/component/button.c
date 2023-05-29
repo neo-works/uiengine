@@ -16,6 +16,24 @@ void button_default_onclick(RenderNode *renderNode, Event e) {
     }
 }
 
+void button_default_onmouse_down(RenderNode *renderNode, Event e) {
+    renderNode->backgroundColor.r -= 20;
+    renderNode->backgroundColor.g -= 20;
+    renderNode->backgroundColor.b -= 20;
+    if (renderNode->onCustomMouseDown != NULL) {
+        renderNode->onCustomMouseDown(renderNode, renderNode->dom);
+    }
+}
+
+void button_default_onmouse_up(RenderNode *renderNode, Event e) {
+    renderNode->backgroundColor.r += 20;
+    renderNode->backgroundColor.g += 20;
+    renderNode->backgroundColor.b += 20;
+    if (renderNode->onCustomMouseUp != NULL) {
+        renderNode->onCustomMouseUp(renderNode, renderNode->dom);
+    }
+}
+
 void button_default_onmouse_enter(RenderNode *renderNode, Event e) {
     if (renderNode->onCustomMouseEnter != NULL) {
         renderNode->onCustomMouseEnter(renderNode, renderNode->dom);
@@ -40,6 +58,10 @@ void button_default_onmouse_hover(RenderNode *renderNode, Event e) {
 Button *button_create() {
     Button *button = (Button *)mem_alloc(sizeof(Button));
     button->renderNode.render = button_default_render;
+    button->renderNode.onMouseDown = button_default_onmouse_down;
+    button->renderNode.onCustomMouseDown = NULL;
+    button->renderNode.onMouseUp = button_default_onmouse_up;
+    button->renderNode.onCustomMouseUp = NULL;
     button->renderNode.onClick = button_default_onclick;
     button->renderNode.onCustomClick = NULL;
     button->renderNode.onMouseEnter = button_default_onmouse_enter;

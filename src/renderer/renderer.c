@@ -53,7 +53,18 @@ void renderer_teigger_mouse_event(RenderNode *renderNode, Event e) {
         renderer_teigger_mouse_event(elem, e);
         node = node->right;
     }
-
+    if (renderNode->onMouseDown != NULL && e.type == EVENT_MOUSE_LEFT_DOWN) {
+        if ((e.leftMouseUp.x >= renderNode->pos.x && e.leftMouseUp.x <= (renderNode->pos.x + renderNode->size.width)) &&
+            (e.leftMouseUp.y >= renderNode->pos.y && e.leftMouseUp.y <= (renderNode->pos.y + renderNode->size.height))) {
+            renderNode->onMouseDown(renderNode, e);
+        }
+    }
+    if (renderNode->onMouseUp != NULL && e.type == EVENT_MOUSE_LEFT_UP) {
+        if ((e.leftMouseUp.x >= renderNode->pos.x && e.leftMouseUp.x <= (renderNode->pos.x + renderNode->size.width)) &&
+            (e.leftMouseUp.y >= renderNode->pos.y && e.leftMouseUp.y <= (renderNode->pos.y + renderNode->size.height))) {
+            renderNode->onMouseUp(renderNode, e);
+        }
+    }
     if (renderNode->onClick != NULL && e.type == EVENT_MOUSE_LEFT_UP) {
         if ((e.leftMouseUp.x >= renderNode->pos.x && e.leftMouseUp.x <= (renderNode->pos.x + renderNode->size.width)) &&
             (e.leftMouseUp.y >= renderNode->pos.y && e.leftMouseUp.y <= (renderNode->pos.y + renderNode->size.height))) {
@@ -89,7 +100,9 @@ void renderer_default_process_event(Renderer *renderer) {
     Event e = renderer->renderBackend->polling(renderer->renderBackend);
     if (e.type == EVENT_EXIT) {
         renderer->runningState = RENDERER_STATE_STOP;
-    } else if (e.type == EVENT_MOUSE_LEFT_UP || e.type == EVENT_MOUSE_MOTION) {
+    } else if (e.type == EVENT_MOUSE_LEFT_UP ||
+               e.type == EVENT_MOUSE_LEFT_DOWN ||
+               e.type == EVENT_MOUSE_MOTION) {
         // Find Trigger RenderNode by ZIndex
         // FIXME: ZIndex is better
         renderer_teigger_mouse_event(renderer->rootNode, e);

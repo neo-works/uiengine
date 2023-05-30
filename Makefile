@@ -1,7 +1,7 @@
 CC=gcc
-CFLAGS=-I. -I/opt/homebrew/Cellar/sdl2/2.26.5/include -g
+CFLAGS=-I. -I/opt/homebrew/Cellar/sdl2/2.26.5/include -I/opt/homebrew/Cellar/sdl2_ttf/2.20.2/include -g
 
-LIB=-lSDL2 -lSDL2main `sdl2-config --cflags --libs` -lpthread
+LIB=-lSDL2 -lSDL2_ttf -lSDL2main `sdl2-config --cflags --libs` -lpthread
 
 COMMON_SRCS = src/web/html_document.c	\
 	src/mem/mem.c	\

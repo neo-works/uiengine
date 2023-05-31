@@ -28,31 +28,31 @@ void button3_click(HtmlElement *elem) {
 int main(int argc, char* argv[]) {
     char *doc =
     "<body id=\"test_id\">"
-        "<button onclick=\"button1_click\" width=\"320\" height=\"80\" x=\"0\" y=\"0\" border-color=\"rgb(47,41,38)\" background=\"rgb(50,45,41)\">text</button>"
+        "<button onclick=\"button1_click\" width=\"320\" height=\"80\" x=\"0\" y=\"0\" border-color=\"rgb(47,41,38)\" background=\"rgb(50,45,41)\">0</button>"
 
-        "<button onclick=\"button1_click\" width=\"80\" height=\"60\" x=\"0\" y=\"80\" border-color=\"rgb(47,41,38)\" background=\"rgb(67,62,59)\">text</button>"
-        "<button onclick=\"button2_click\" width=\"80\" height=\"60\" x=\"80\" y=\"80\" border-color=\"rgb(47,41,38)\" background=\"rgb(67,62,59)\">text</button>"
-        "<button onclick=\"button3_click\" width=\"80\" height=\"60\" x=\"160\" y=\"80\" border-color=\"rgb(47,41,38)\" background=\"rgb(67,62,59)\">text</button>"
-        "<button width=\"80\" height=\"60\" x=\"240\" y=\"80\" border-color=\"rgb(47,41,38)\" background=\"rgb(242,163,60)\">text</button>"
+        "<button onclick=\"button1_click\" width=\"80\" height=\"60\" x=\"0\" y=\"80\" border-color=\"rgb(47,41,38)\" background=\"rgb(67,62,59)\">AC</button>"
+        "<button onclick=\"button2_click\" width=\"80\" height=\"60\" x=\"80\" y=\"80\" border-color=\"rgb(47,41,38)\" background=\"rgb(67,62,59)\">+/-</button>"
+        "<button onclick=\"button3_click\" width=\"80\" height=\"60\" x=\"160\" y=\"80\" border-color=\"rgb(47,41,38)\" background=\"rgb(67,62,59)\">%</button>"
+        "<button width=\"80\" height=\"60\" x=\"240\" y=\"80\" border-color=\"rgb(47,41,38)\" background=\"rgb(242,163,60)\">/</button>"
 
-        "<button width=\"80\" height=\"60\" x=\"0\" y=\"140\" border-color=\"rgb(47,41,38)\" background=\"rgb(105,101,98)\">text</button>"
-        "<button width=\"80\" height=\"60\" x=\"80\" y=\"140\" border-color=\"rgb(47,41,38)\" background=\"rgb(105,101,98)\">text</button>"
-        "<button width=\"80\" height=\"60\" x=\"160\" y=\"140\" border-color=\"rgb(47,41,38)\" background=\"rgb(105,101,98)\">text</button>"
-        "<button width=\"80\" height=\"60\" x=\"240\" y=\"140\" border-color=\"rgb(47,41,38)\" background=\"rgb(242,163,60)\">text</button>"
+        "<button width=\"80\" height=\"60\" x=\"0\" y=\"140\" border-color=\"rgb(47,41,38)\" background=\"rgb(105,101,98)\">7</button>"
+        "<button width=\"80\" height=\"60\" x=\"80\" y=\"140\" border-color=\"rgb(47,41,38)\" background=\"rgb(105,101,98)\">8</button>"
+        "<button width=\"80\" height=\"60\" x=\"160\" y=\"140\" border-color=\"rgb(47,41,38)\" background=\"rgb(105,101,98)\">9</button>"
+        "<button width=\"80\" height=\"60\" x=\"240\" y=\"140\" border-color=\"rgb(47,41,38)\" background=\"rgb(242,163,60)\">x</button>"
 
-        "<button width=\"80\" height=\"60\" x=\"0\" y=\"200\" border-color=\"rgb(47,41,38)\" background=\"rgb(105,101,98)\">text</button>"
-        "<button width=\"80\" height=\"60\" x=\"80\" y=\"200\" border-color=\"rgb(47,41,38)\" background=\"rgb(105,101,98)\">text</button>"
-        "<button width=\"80\" height=\"60\" x=\"160\" y=\"200\" border-color=\"rgb(47,41,38)\" background=\"rgb(105,101,98)\">text</button>"
-        "<button width=\"80\" height=\"60\" x=\"240\" y=\"200\" border-color=\"rgb(47,41,38)\" background=\"rgb(242,163,60)\">text</button>"
+        "<button width=\"80\" height=\"60\" x=\"0\" y=\"200\" border-color=\"rgb(47,41,38)\" background=\"rgb(105,101,98)\">4</button>"
+        "<button width=\"80\" height=\"60\" x=\"80\" y=\"200\" border-color=\"rgb(47,41,38)\" background=\"rgb(105,101,98)\">5</button>"
+        "<button width=\"80\" height=\"60\" x=\"160\" y=\"200\" border-color=\"rgb(47,41,38)\" background=\"rgb(105,101,98)\">6</button>"
+        "<button width=\"80\" height=\"60\" x=\"240\" y=\"200\" border-color=\"rgb(47,41,38)\" background=\"rgb(242,163,60)\">-</button>"
 
-        "<button width=\"80\" height=\"60\" x=\"0\" y=\"260\" border-color=\"rgb(47,41,38)\" background=\"rgb(105,101,98)\">text</button>"
-        "<button width=\"80\" height=\"60\" x=\"80\" y=\"260\" border-color=\"rgb(47,41,38)\" background=\"rgb(105,101,98)\">text</button>"
-        "<button width=\"80\" height=\"60\" x=\"160\" y=\"260\" border-color=\"rgb(47,41,38)\" background=\"rgb(105,101,98)\">text</button>"
-        "<button width=\"80\" height=\"60\" x=\"240\" y=\"260\" border-color=\"rgb(47,41,38)\" background=\"rgb(242,163,60)\">text</button>"
+        "<button width=\"80\" height=\"60\" x=\"0\" y=\"260\" border-color=\"rgb(47,41,38)\" background=\"rgb(105,101,98)\">1</button>"
+        "<button width=\"80\" height=\"60\" x=\"80\" y=\"260\" border-color=\"rgb(47,41,38)\" background=\"rgb(105,101,98)\">2</button>"
+        "<button width=\"80\" height=\"60\" x=\"160\" y=\"260\" border-color=\"rgb(47,41,38)\" background=\"rgb(105,101,98)\">3</button>"
+        "<button width=\"80\" height=\"60\" x=\"240\" y=\"260\" border-color=\"rgb(47,41,38)\" background=\"rgb(242,163,60)\">+</button>"
 
-        "<button width=\"160\" height=\"60\" x=\"0\" y=\"320\" border-color=\"rgb(47,41,38)\" background=\"rgb(105,101,98)\">text</button>"
-        "<button width=\"80\" height=\"60\" x=\"160\" y=\"320\" border-color=\"rgb(47,41,38)\" background=\"rgb(105,101,98)\">text</button>"
-        "<button width=\"80\" height=\"60\" x=\"240\" y=\"320\" border-color=\"rgb(47,41,38)\" background=\"rgb(242,163,60)\">text</button>"
+        "<button width=\"160\" height=\"60\" x=\"0\" y=\"320\" border-color=\"rgb(47,41,38)\" background=\"rgb(105,101,98)\">0</button>"
+        "<button width=\"80\" height=\"60\" x=\"160\" y=\"320\" border-color=\"rgb(47,41,38)\" background=\"rgb(105,101,98)\">.</button>"
+        "<button width=\"80\" height=\"60\" x=\"240\" y=\"320\" border-color=\"rgb(47,41,38)\" background=\"rgb(242,163,60)\">=</button>"
     "</body>";
     HtmlDocument* document = document_load(doc);
 

@@ -1,12 +1,29 @@
 #include "../../../include/renderer/component/button.h"
 #include "../../../include/mem/mem.h"
 #include <stdio.h>
+#include <string.h>
 
 void button_default_render(RenderNode *renderNode, Renderer *renderer) {
     Button *button = ContainerOf(renderNode, Button, renderNode);
     renderer->fillRect(renderer, button->renderNode.pos, button->renderNode.size, button->renderNode.backgroundColor);
     renderer->drawRect(renderer, button->renderNode.pos, button->renderNode.size, button->renderNode.borderColor);
+    if ((renderNode->dom->type == HTML_ELEMENT_TYPE_DOM) && 
+        (strcmp(renderNode->dom->dom.tag, "button") == 0)){
+        HtmlElement *e = renderNode->dom->dom.childrens;
+        if ((e != NULL) && (e->type == HTML_ELEMENT_TYPE_CONTENT)) {
+            char *text = e->content.content;
+            uint32_t fontSize = 50;
+            uint32_t fontLen = strlen(text) * (fontSize / 2.5);
 
+            uint32_t posX = renderNode->pos.x + (renderNode->size.width - fontLen) / 2;
+            uint32_t posY = renderNode->pos.y + (renderNode->size.height - fontSize) / 2;
+
+            Position pos = { posX, posY };
+            Size size = { fontLen, fontSize};
+            Color color = {255,255,255,0};
+            renderer->drawText(renderer, pos, size, color, text);
+        }
+    }
     render_child(&button->renderNode, renderer);
 }
 

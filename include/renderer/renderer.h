@@ -12,6 +12,7 @@ typedef enum RendererState {
 } RendererState;
 
 typedef void (*RenderBackendDrawRect)(struct RenderBackend *, Position, Size, Color);
+typedef void (*RenderBackendDrawText)(struct RenderBackend *, Position, Size, Color, char *text);
 typedef void (*RenderBackendInit)(struct RenderBackend *);
 typedef void (*RenderBackendSubmit)(struct RenderBackend *);
 typedef void (*RenderBackendClear)(struct RenderBackend *);
@@ -23,11 +24,13 @@ typedef struct RenderBackend {
     RenderBackendPolling polling;
     RenderBackendDrawRect drawRect;
     RenderBackendDrawRect fillRect;
+    RenderBackendDrawText drawText;
 } RenderBackend;
 
 typedef void (*RendererRegisterBackend)(struct Renderer *, RenderBackend *);
 typedef void (*RendererSetRootRenderNode)(struct Renderer *, struct RenderNode *);
 typedef void (*RendererDrawRect)(struct Renderer *, Position, Size, Color);
+typedef void (*RendererDrawText)(struct Renderer *, Position, Size, Color, char*);
 typedef void (*RendererRender)(struct Renderer *);
 typedef void (*RendererProcessEvent)(struct Renderer *);
 typedef void (*RendererInit)(struct Renderer *);
@@ -50,6 +53,7 @@ typedef struct Renderer {
 
     RendererDrawRect drawRect;
     RendererDrawRect fillRect;
+    RendererDrawText drawText;
 } Renderer;
 
 Renderer *render_create();

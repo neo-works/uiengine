@@ -11,12 +11,70 @@ SDL_Window* gWindow = NULL;
 SDL_Renderer *sdlRenderer = NULL;
 TTF_Font *gFont = NULL;
 
-SDL_Texture *sdl_font_get_texutre(Color color, char *text) {
-    uint32_t key = hash_text(color, text);
+typedef struct TextTexture {
+    char *text;
+    Color color;
+    SDL_Texture *texture;
+    DListNode node;
+} TextTexture;
+
+// TODO: Tempory use dlist, wiall change to hashmap latter
+TextTexture *textTextureCache = NULL;
+
+SDL_Texture *sdl_font_texutre_cache_get(Color color, char *text) {
+    if (textTextureCache == NULL) {
+        return NULL;
+    }
+    DListNode *list = &textTextureCache->node;
+    while (list != NULL) {
+        TextTexture *texture = ContainerOf(list, TextTexture, node);
+        if ((strcmp(texture->text, text) == 0) &&
+            ((texture->color.r == color.r) && 
+            (texture->color.r == color.r) && 
+            (texture->color.r == color.r) && 
+            (texture->color.r == color.r))) {
+                return texture->texture;
+            }
+        list = list->right;
+    }
+    return NULL;
 }
 
-void sdl_font_set_texutre(Color color, char *text, SDL_Texture *fontTexture) {
-    uint32_t key = hash_text(color, text);
+void sdl_font_texutre_cache_set(Color color, char *text, SDL_Texture *fontTexture) {
+    TextTexture *textTexture = (TextTexture *)mem_alloc(sizeof(TextTexture));
+    INIT_DNODE(textTexture->node);
+
+    textTexture->color = color;
+    textTexture->text = text;
+    textTexture->texture = fontTexture;
+    if (textTextureCache == NULL) {
+        textTextureCache = textTexture;
+    } else {
+        dlist_insert(&textTextureCache->node, &textTexture->node);
+    }
+}
+
+void sdl2_backend_default_draw_text(RenderBackend *sdl2, Position pos, Size size, Color color, char *text) {
+    // TODO: margin for text
+    SDL_Texture *fontTexture = sdl_font_texutre_cache_get(color, text);
+    if (fontTexture == NULL) {
+        SDL_Color col;
+        col.r = color.r;
+        col.g = color.g;
+        col.b = color.b;
+        col.a = color.a;
+        SDL_Surface *surface = TTF_RenderText_Blended(gFont, text, col);
+        fontTexture = SDL_CreateTextureFromSurface(sdlRenderer, surface);
+        if (fontTexture == NULL) {
+            printf("TTF: create texture for text '%s' failed!\n", text);
+        }
+        SDL_FreeSurface(surface);
+        sdl_font_texutre_cache_set(color, text, fontTexture);
+    }
+    SDL_Rect textQuad = {
+        pos.x, pos.y, size.width, size.height
+    };
+    SDL_RenderCopy(sdlRenderer, fontTexture, NULL, &textQuad);
 }
 
 void sdl2_backend_default_draw_rect(RenderBackend *sdl2, Position pos, Size size, Color borderColor) {
@@ -25,28 +83,7 @@ void sdl2_backend_default_draw_rect(RenderBackend *sdl2, Position pos, Size size
         pos.x, pos.y, size.width, size.height
     };
     SDL_RenderDrawRect(sdlRenderer, &rect);
-}
-
-void sdl_backend_default_draw_text(RenderBackend *sdl2, Position pos, Size size, Color color, char *text) {
-    // TODO: margin for text
-    SDL_Rect textQuad = {
-        pos.x + 20, pos.y + 10, size.width - 40, size.height - 20
-    };
-
-    SDL_Texture *fontTexture = sdl_font_get_texutre(color, text);
-    if (fontTexture == NULL) {
-        SDL_Color col;
-        col.r = color.r;
-        col.g = color.g;
-        col.b = color.b;
-        col.a = color.a;
-        fontTexture = SDL_CreateTextureFromSurface(sdlRenderer, TTF_RenderText_Solid(gFont, "button", col));
-        if (fontTexture == NULL) {
-            printf("TTF: create texture for text '%s' failed!\n", text);
-        }
-        sdl_font_set_texutre(color, text, fontTexture);
-    }
-    SDL_RenderCopy(sdlRenderer, fontTexture, NULL, &textQuad);
+    Color c = {255,255,255,0};
 }
 
 void sdl2_backend_default_fill_rect(RenderBackend *sdl2, Position pos, Size size, Color backgroundColor) {
@@ -78,7 +115,7 @@ void sdl2_backend_default_init(struct RenderBackend *sdl2) {
         printf("TTF int failed! SDL_Error: %s\n", SDL_GetError());
         return;
     }
-    gFont = TTF_OpenFont("./puhui.ttf", 512);
+    gFont = TTF_OpenFont("./puhui.ttf", 64);
     if (gFont == NULL) {
         printf("TTF open failed! SDL_Error: %s\n", SDL_GetError());
         return;
@@ -133,6 +170,7 @@ RenderBackend *backend_sdl2_create() {
     RenderBackend *sdl2  = (RenderBackend *)mem_alloc(sizeof(RenderBackend));
     sdl2->drawRect = sdl2_backend_default_draw_rect;
     sdl2->fillRect = sdl2_backend_default_fill_rect;
+    sdl2->drawText = sdl2_backend_default_draw_text;
     sdl2->submit = sdl2_backend_default_submit;
     sdl2->clear = sdl2_backend_default_clear;
     sdl2->polling = sdl2_backend_default_polling;

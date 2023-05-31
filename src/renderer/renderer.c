@@ -7,6 +7,10 @@ void renderer_default_draw_rect(Renderer *renderer, Position pos, Size size, Col
     renderer->renderBackend->drawRect(renderer->renderBackend, pos, size, backgroundColor);
 }
 
+void renderer_default_draw_text(Renderer *renderer, Position pos, Size size, Color fontColor, char *text) {
+    renderer->renderBackend->drawText(renderer->renderBackend, pos, size, fontColor, text);
+}
+
 void renderer_default_fill_rect(Renderer *renderer, Position pos, Size size, Color backgroundColor) {
     renderer->renderBackend->fillRect(renderer->renderBackend, pos, size, backgroundColor);
 }
@@ -165,5 +169,6 @@ Renderer *render_create() {
 
     renderer->drawRect = renderer_default_draw_rect;
     renderer->fillRect = renderer_default_fill_rect;
+    renderer->drawText = renderer_default_draw_text;
     return renderer;
 }

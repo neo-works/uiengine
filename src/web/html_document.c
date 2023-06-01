@@ -264,7 +264,12 @@ void documen_set_render_node_attribute(struct HtmlDocument *document, RenderNode
             }
             if (strcmp(attribute->key, "onclick") == 0) {
                 HtmlDomFunc *func = document_find_dom_func_by_name(document, attribute->val);
-                renderNode->onCustomClick = func->func;
+                if (func == NULL) {
+                    printf("No func registered for '%s'\n", attribute->val);
+                    renderNode->onCustomClick = NULL;
+                } else {
+                    renderNode->onCustomClick = func->func;
+                }
             }
             attrNode = attrNode->right;
         }

@@ -1,16 +1,34 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include "include/mem/mem.h"
 #include "include/web/html_document.h"
 #include "include/renderer/renderer.h"
 #include "include/renderer/component/button.h"
 #include "src/renderer/backend/sdl2/backend_sdl2.h"
 
-void button1_click(HtmlElement *elem) {
-    if (elem != NULL) {
-        printf("button 1 clicked!\n");
+HtmlDocument* document = NULL;
+
+char result[0x40] = {0};
+
+void update_result_view(char *str) {
+    HtmlElement *dom = document->get_element_by_id(document, "result");
+    if (dom == NULL) {
+        return;
     }
+
+    if (dom->dom.childrens == NULL) {
+        return;
+    }
+
+}
+
+void button1_click(HtmlElement *elem) {
+    if (elem != NULL && elem->type != HTML_ELEMENT_TYPE_DOM) {
+        return;
+    }
+    update_result_view("1");
 }
 
 void button2_click(HtmlElement *elem) {
@@ -54,14 +72,12 @@ int main(int argc, char* argv[]) {
         "<button width=\"80\" height=\"60\" x=\"160\" y=\"320\" border-color=\"rgb(47,41,38)\" background=\"rgb(105,101,98)\">.</button>"
         "<button width=\"80\" height=\"60\" x=\"240\" y=\"320\" border-color=\"rgb(47,41,38)\" background=\"rgb(242,163,60)\">=</button>"
     "</body>";
-    HtmlDocument* document = document_load(doc);
+    document = document_load(doc);
 
     // Binding
     document->registerDomFunc(document, "button1_click", button1_click);
     document->registerDomFunc(document, "button2_click", button2_click);
     document->registerDomFunc(document, "button3_click", button3_click);
-
-
 
     document->dump(document);
     printf("\nMem Usage: %d bytes\n", mem_get_usage());

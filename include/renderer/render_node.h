@@ -14,7 +14,7 @@ typedef void (*RenderNodeOnCustomMouseDown)(struct RenderNode *, struct HtmlElem
 typedef void (*RenderNodeOnMouseUp)(struct RenderNode *, Event e);
 typedef void (*RenderNodeOnCustomMouseUp)(struct RenderNode *, struct HtmlElement *elem);
 typedef void (*RenderNodeOnClick)(struct RenderNode *, Event e);
-typedef void (*RenderNodeOnCustomClick)(struct RenderNode *, struct HtmlElement *elem);
+typedef void (*RenderNodeOnCustomClick)(struct HtmlElement *elem);
 typedef void (*RenderNodeOnMouseEnter)(struct RenderNode *, Event e);
 typedef void (*RenderNodeOnCustomMouseEnter)(struct RenderNode *, struct HtmlElement *elem);
 typedef void (*RenderNodeOnMouseLeave)(struct RenderNode *, Event e);

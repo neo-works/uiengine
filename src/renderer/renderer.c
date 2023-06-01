@@ -57,6 +57,9 @@ void renderer_teigger_mouse_event(RenderNode *renderNode, Event e) {
         renderer_teigger_mouse_event(elem, e);
         node = node->right;
     }
+    if (renderNode->dom->type != HTML_ELEMENT_TYPE_DOM) {
+        return;
+    }
     if (renderNode->onMouseDown != NULL && e.type == EVENT_MOUSE_LEFT_DOWN) {
         if ((e.leftMouseUp.x >= renderNode->pos.x && e.leftMouseUp.x <= (renderNode->pos.x + renderNode->size.width)) &&
             (e.leftMouseUp.y >= renderNode->pos.y && e.leftMouseUp.y <= (renderNode->pos.y + renderNode->size.height))) {

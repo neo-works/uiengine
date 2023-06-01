@@ -29,7 +29,7 @@ void button_default_render(RenderNode *renderNode, Renderer *renderer) {
 
 void button_default_onclick(RenderNode *renderNode, Event e) {
     if (renderNode->onCustomClick != NULL) {
-        renderNode->onCustomClick(renderNode, renderNode->dom);
+        renderNode->onCustomClick(renderNode->dom);
     }
 }
 

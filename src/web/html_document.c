@@ -119,6 +119,7 @@ HtmlDocument *document_get_element_by_id(struct HtmlElement *element, char *id) 
     return NULL;
 }
 
+// TODO: refactor by more efficency struct like hashmap
 HtmlElement* document_default_get_element_by_id(struct HtmlDocument *doc, char *id) {
     HtmlElement *element = doc->body;
     return document_get_element_by_id(element, id);

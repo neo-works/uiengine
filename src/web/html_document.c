@@ -92,8 +92,36 @@ HtmlElement* document_default_get_element_by_name(struct HtmlDocument *doc, char
     return NULL;
 }
 
-HtmlElement* document_default_get_element_by_id(struct HtmlDocument *doc, char *id) {
+
+HtmlDocument *document_get_element_by_id(struct HtmlElement *element, char *id) {
+    if (element == NULL) {
+        return NULL;
+    }
+    if (element->type == HTML_ELEMENT_TYPE_DOM) {
+        if (element->dom.id == NULL) {
+            return NULL;
+        }
+        if (strcmp(element->dom.id, id) == 0) {
+            return element;
+        }
+        HtmlElement *childrens = element->dom.childrens;
+        if (childrens != NULL) {
+            DListNode *node = &childrens->node;
+            while (node != NULL) {
+                HtmlElement *e = document_get_element_by_id(ContainerOf(node, HtmlElement, node), id);
+                if (e != NULL) {
+                    return e;
+                }
+                node = node->right;
+            }
+        }
+    }
     return NULL;
+}
+
+HtmlElement* document_default_get_element_by_id(struct HtmlDocument *doc, char *id) {
+    HtmlElement *element = doc->body;
+    return document_get_element_by_id(element, id);
 }
 
 void document_dump_element_attr(HtmlAttribute *attr) {
@@ -373,6 +401,7 @@ void document_default_register_dom_func(struct HtmlDocument *document, char *nam
 }
 
 void document_init(HtmlDocument *document) {
+    document->body = NULL;
     document->domFuncs = NULL;
     document->get_element_by_id = document_default_get_element_by_id;
     document->get_element_by_name = document_default_get_element_by_name;
@@ -396,9 +425,9 @@ char *document_parse_content(HtmlElement *content, char *doc) {
 /**
  * @brief ({WHITESPACE}({TEXT})[0:1]{WHITESPACE}({ELEMENT})*)* </
  * 
- * @param children 
- * @param doc 
- * @return char* 
+ * @param children
+ * @param doc
+ * @return char*
  */
 char *document_parse_childrens(HtmlElement *children, char *doc) {
     HtmlElement *head = children;
@@ -437,7 +466,7 @@ char *document_parse_childrens(HtmlElement *children, char *doc) {
  * @param doc 
  * @return HtmlAttribute* 
  */
-char *document_parse_attributes(HtmlAttribute* attr, char *doc) {
+char *document_parse_attributes(HtmlElement *element, HtmlAttribute* attr, char *doc) {
     HtmlAttribute *head = attr;
     bool first = true;
     while(*doc != '>') {
@@ -456,6 +485,10 @@ char *document_parse_attributes(HtmlAttribute* attr, char *doc) {
         doc = document_match_and_consume(doc, attr->val);
         if (strcmp(attr->key, "style") == 0) {
             // TODO: parse css
+        }
+
+        if (strcmp(attr->key, "id") == 0) {
+            element->dom.id = attr->val;
         }
         doc = document_match_and_consume(doc, bound);
         doc = document_consume_whitespace(doc);
@@ -484,7 +517,7 @@ char *document_parse_element(HtmlElement *element, char *doc) {
     if (*doc != '>') {
         HtmlAttribute *attr = (HtmlAttribute*)mem_alloc(sizeof(HtmlAttribute));
         INIT_DNODE(attr->node);
-        doc = document_parse_attributes(attr, doc);
+        doc = document_parse_attributes(element, attr, doc);
         element->dom.attributes = attr;
     }
     doc = document_match_and_consume(doc, ">");

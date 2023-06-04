@@ -373,6 +373,7 @@ void document_default_register_dom_func(struct HtmlDocument *document, char *nam
 }
 
 void document_init(HtmlDocument *document) {
+    document->body = NULL;
     document->domFuncs = NULL;
     document->get_element_by_id = document_default_get_element_by_id;
     document->get_element_by_name = document_default_get_element_by_name;
@@ -396,9 +397,9 @@ char *document_parse_content(HtmlElement *content, char *doc) {
 /**
  * @brief ({WHITESPACE}({TEXT})[0:1]{WHITESPACE}({ELEMENT})*)* </
  * 
- * @param children 
- * @param doc 
- * @return char* 
+ * @param children
+ * @param doc
+ * @return char*
  */
 char *document_parse_childrens(HtmlElement *children, char *doc) {
     HtmlElement *head = children;

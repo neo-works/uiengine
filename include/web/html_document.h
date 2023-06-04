@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 #include "../dlist.h"
-#include "../trie_tree.h"
 #include "../../include/renderer/render_node.h"
 
 typedef unsigned char bool;
@@ -34,9 +33,6 @@ typedef struct HtmlDomElement {
     char *tag;
     char *id;
     char *name;
-
-    TrieTreeNode idNode;
-    TrieTreeNode nameNode;
 
     HtmlAttribute *attributes;
 
@@ -74,8 +70,7 @@ typedef void (*HtmlDocumentRegisterDomFunc)(struct HtmlDocument *, char *, void(
 typedef struct HtmlDocument {
     HtmlElement *body;
 
-    TrieTreeNode *idTree;
-    TrieTreeNode *nameTree;
+    HtmlElement *head;
 
     HtmlDomFunc *domFuncs;
 
